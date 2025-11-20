@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: chronos_postgres
+    environment:
+      POSTGRES_USER: chronos
+      POSTGRES_PASSWORD: chronos123
+      POSTGRES_DB: chronos_db
+      TZ: Asia/Kolkata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+volumes:
+  pgdata:
