@@ -34,8 +34,8 @@ public class Job {
     private int maxRetry;
     private int maxExecutionTime;
 
+    private OffsetDateTime reservedAt;
     private boolean isEnabled;
-    private boolean isPickedByWorker;
 
     private String createdBy;
     private OffsetDateTime createdAt;
