@@ -17,6 +17,7 @@ import java.util.Map;
 @Builder
 public class JobResponseDto {
     private long id;
+    private String name;
     private Status status;
     private Map<String, Object> payload;
     private boolean isRecurring;

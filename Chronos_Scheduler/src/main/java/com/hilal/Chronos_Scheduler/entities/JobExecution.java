@@ -27,8 +27,10 @@ public class JobExecution {
     private OffsetDateTime startedAt;
     private OffsetDateTime finishedAt;
     private OffsetDateTime lastHearbeatAt;
+    private OffsetDateTime maxExecutionTime;
 
     private int retryNumber;
+    private boolean isPickedByWorker;
 
     @Column(columnDefinition = "TEXT")
     private String log;
