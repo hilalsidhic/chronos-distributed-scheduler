@@ -5,7 +5,7 @@ import com.hilal.Chronos_Scheduler.entities.dtos.JobResponseDto;
 
 public class JobMapper {
     public static void mapJobRequestDtoToJob() {
-
+        // We use factory for this mapping
     }
     public static JobResponseDto mapJobToJobResponseDto(Job job) {
         return JobResponseDto.builder()

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class JobController {
 
@@ -19,36 +21,31 @@ public class JobController {
 
     @PostMapping("/jobs")
     public ResponseEntity<JobResponseDto> createJob(@RequestBody JobRequestDto jobRequestDto) {
-        return ResponseEntity.ok(new JobResponseDto());
+        JobResponseDto job = jobService.createJob_service(jobRequestDto);
+        return ResponseEntity.ok(job);
     }
 
     @PostMapping("/jobs/recurring")
     public ResponseEntity<JobResponseDto> createRecurringJob(@RequestBody JobRequestDto jobRequestDto) {
-        return ResponseEntity.ok(new JobResponseDto());
+        JobResponseDto job = jobService.createRecurringJob_service(jobRequestDto);
+        return ResponseEntity.ok(job);
     }
 
     @GetMapping("/jobs/{id}")
     public ResponseEntity<JobResponseDto> getJobById(@PathVariable long id) {
-        return ResponseEntity.ok(new JobResponseDto());
+        JobResponseDto job = jobService.getJobById_service(id);
+        return ResponseEntity.ok(job);
     }
 
     @DeleteMapping("/jobs/{id}")
-    public ResponseEntity<JobResponseDto> deleteJobById(@PathVariable long id) {
-        return ResponseEntity.ok(new JobResponseDto());
-    }
-
-    @GetMapping("/jobs/{id}/executions")
-    public ResponseEntity<JobResponseDto> getExecutionsById(@PathVariable long id) {
-        return ResponseEntity.ok(new JobResponseDto());
+    public ResponseEntity<String> deleteJobById(@PathVariable long id) {
+        jobService.deleteJobById_service(id);
+        return ResponseEntity.ok().body("Job deleted successfully");
     }
 
     @GetMapping("/jobs")
-    public ResponseEntity<JobResponseDto> getAllJobs() {
-        return ResponseEntity.ok(new JobResponseDto());
-    }
-
-    @PostMapping("/jobs/{id}/retry")
-    public ResponseEntity<JobResponseDto> retryJobById(@PathVariable long id) {
-        return ResponseEntity.ok(new JobResponseDto());
+    public ResponseEntity<List<JobResponseDto>> getAllJobs() {
+        List<JobResponseDto> jobs = jobService.getAllJobs_service();
+        return ResponseEntity.ok(jobs);
     }
 }

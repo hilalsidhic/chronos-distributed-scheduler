@@ -1,13 +1,16 @@
 package com.hilal.Chronos_Scheduler.entities;
 
 import com.hilal.Chronos_Scheduler.entities.enums.ExecutionStatus;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -27,7 +30,11 @@ public class JobExecution {
     private OffsetDateTime startedAt;
     private OffsetDateTime finishedAt;
     private OffsetDateTime lastHearbeatAt;
-    private OffsetDateTime maxExecutionTime;
+    private int maxExecutionTime;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, Object> payload;
 
     private int retryNumber;
     private boolean isPickedByWorker;
