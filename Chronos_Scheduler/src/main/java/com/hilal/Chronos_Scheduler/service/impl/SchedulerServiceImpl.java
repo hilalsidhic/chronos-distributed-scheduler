@@ -37,6 +37,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 60000)
     public void resetStatusReservedJobs_service() {
         List<Job> failedJobs = jobRepository.lockStuckJobs();
+        if(failedJobs.isEmpty()) return;
         for(Job job : failedJobs) {
             job.setStatus(Status.PENDING);
         }
@@ -48,6 +49,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 2000)
     public void getJobsToExecute_service() {
         List<Job> jobsToExecute = jobStateService.getJobsToExecuteBatch(10);
+        if (jobsToExecute.isEmpty()) return;
         for (Job job : jobsToExecute) {
             try {
                 boolean added = jobQueue.offer(job, 1000, TimeUnit.MILLISECONDS);
@@ -65,6 +67,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 5000)
     public void getCompletedJobExecutions_service() {
         List<JobExecution> completedJobs = jobExecutionStateService.setCompletedJobExecutionAsPreserved(10);
+        if (completedJobs.isEmpty()) return;
         for(JobExecution jobExecution : completedJobs) {
             Job job = jobExecution.getJob();
             if (job.isRecurring()) {
@@ -87,6 +90,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 10000)
     public void getFailedJobExecutions_service() {
         List<JobExecution> failedJobs = jobExecutionStateService.setFailedJobExecutionAsPreserved(10);
+        if (failedJobs.isEmpty()) return;
         for(JobExecution jobExecution : failedJobs) {
             Job job = jobExecution.getJob();
             if (job.isRecurring()) {
@@ -110,6 +114,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 15000)
     public void getTimedOutJobExecutions_service() {
         List<JobExecution> timedOutJobs = jobExecutionStateService.setTimedOutJobExecutionAsPreserved(10);
+        if (timedOutJobs.isEmpty()) return;
         for(JobExecution jobExecution : timedOutJobs) {
             Job job = jobExecution.getJob();
             if(job.getRetryCount() >= job.getMaxRetry()) {

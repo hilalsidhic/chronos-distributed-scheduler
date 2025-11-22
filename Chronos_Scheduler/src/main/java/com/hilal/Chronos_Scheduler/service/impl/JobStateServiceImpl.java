@@ -35,6 +35,7 @@ public class JobStateServiceImpl implements JobStateService {
     @Transactional
     public List<Job> getJobsToExecuteBatch(int limit){
         List<Job> jobs = jobRepository.lockPendingJobs(limit);
+        if (jobs.isEmpty()) return jobs;
         for(Job job : jobs) {
             job.setStatus(Status.RESERVED);
             job.setReservedAt(OffsetDateTime.now());

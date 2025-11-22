@@ -22,10 +22,11 @@ public class JobExecution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "jobId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id")
     private Job job;
 
+    @Enumerated(EnumType.STRING)
     private ExecutionStatus status;
     private OffsetDateTime startedAt;
     private OffsetDateTime finishedAt;

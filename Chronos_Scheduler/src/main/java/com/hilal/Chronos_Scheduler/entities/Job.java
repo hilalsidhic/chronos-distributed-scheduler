@@ -19,6 +19,8 @@ public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     private String name;
