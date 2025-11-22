@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
     @Query(
-            value = "SELECT * FROM jobs " +
+            value = "SELECT * FROM job " +
                     "WHERE next_execution_time<=NOW() " +
                     "AND status = 'PENDING' " +
                     "AND retry_count < max_retry " +
                     "AND is_enabled = True " +
-                    "FOR UPDATE SKIP LOCKED " +
                     "ORDER BY next_execution_time ASC "+
+                    "FOR UPDATE SKIP LOCKED " +
                     "LIMIT :limit",
             nativeQuery = true
     )
@@ -25,7 +25,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
 
     @Query(
-            value = "SELECT * FROM jobs " +
+            value = "SELECT * FROM job " +
                     "WHERE status= 'RESERVED' " +
                     "AND reserved_at <= NOW() - INTERVAL '60 seconds' "+
                     "FOR UPDATE SKIP LOCKED ",

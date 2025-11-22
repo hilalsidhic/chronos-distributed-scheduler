@@ -20,6 +20,7 @@ public class JobExecutionStateServiceImpl implements JobExecutionStateService {
     @Transactional
     public List<JobExecution> setCompletedJobExecutionAsPreserved(int limit) {
         List<JobExecution> completedJobs = jobExecutionRepository.lockCompletedJobExecutions(limit);
+        if (completedJobs.isEmpty()) return completedJobs;
         for(JobExecution jobExecution : completedJobs) {
             jobExecution.setStatus(ExecutionStatus.PRESERVED);
         }
@@ -30,6 +31,7 @@ public class JobExecutionStateServiceImpl implements JobExecutionStateService {
     @Transactional
     public List<JobExecution> setFailedJobExecutionAsPreserved(int limit) {
         List<JobExecution> failedJobs = jobExecutionRepository.lockFailedJobExecutions(limit);
+        if(failedJobs.isEmpty()) return failedJobs;
         for(JobExecution jobExecution : failedJobs) {
             jobExecution.setStatus(ExecutionStatus.PRESERVED);
         }
@@ -40,6 +42,7 @@ public class JobExecutionStateServiceImpl implements JobExecutionStateService {
     @Transactional
     public List<JobExecution> setTimedOutJobExecutionAsPreserved(int limit) {
         List<JobExecution> timedOutJobs = jobExecutionRepository.lockTimedOutJobExecutions(limit);
+        if(timedOutJobs.isEmpty()) return timedOutJobs;
         for(JobExecution jobExecution : timedOutJobs) {
             jobExecution.setStatus(ExecutionStatus.PRESERVED);
         }
