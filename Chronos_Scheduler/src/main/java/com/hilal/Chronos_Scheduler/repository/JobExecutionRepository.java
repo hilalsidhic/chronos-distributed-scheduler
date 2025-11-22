@@ -35,4 +35,14 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             nativeQuery = true
     )
     List<JobExecution> lockCompletedJobExecutions(int limit);
+
+    @Query(
+            value = "SELECT * FROM job_executions " +
+                    "WHERE job_id = :jobId"+
+                    "ORDER BY created_at DESC "+
+                    "LIMIT :limit "+
+                    "OFFSET :offset",
+            nativeQuery = true
+    )
+    List<JobExecution> findByJobId(long jobId,long limit,long offset);
 }

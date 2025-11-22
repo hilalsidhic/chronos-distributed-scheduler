@@ -15,6 +15,8 @@ public class JobExecutionFactoryImpl implements JobExecutionFactory {
                 .job(job)
                 .status(ExecutionStatus.PENDING)
                 .retryNumber(job.getRetryCount())
+                .maxExecutionTime(job.getMaxExecutionTime())
+                .payload(job.getPayload())
                 .build();
     }
 }
