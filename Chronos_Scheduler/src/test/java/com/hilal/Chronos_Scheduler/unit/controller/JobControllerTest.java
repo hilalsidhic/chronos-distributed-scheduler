@@ -1,5 +1,6 @@
-package com.hilal.Chronos_Scheduler.controller;
+package com.hilal.Chronos_Scheduler.unit.controller;
 
+import com.hilal.Chronos_Scheduler.controller.JobController;
 import com.hilal.Chronos_Scheduler.entities.dtos.JobRequestDto;
 import com.hilal.Chronos_Scheduler.entities.dtos.JobResponseDto;
 import com.hilal.Chronos_Scheduler.service.JobExecutionService;

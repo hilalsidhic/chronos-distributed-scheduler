@@ -8,6 +8,7 @@ import com.hilal.Chronos_Scheduler.entities.enums.ExecutionStatus;
 import com.hilal.Chronos_Scheduler.entities.enums.Status;
 import com.hilal.Chronos_Scheduler.entities.mapper.JobExecutionMapper;
 import com.hilal.Chronos_Scheduler.entities.mapper.JobMapper;
+import com.hilal.Chronos_Scheduler.exceptions.types.NotFoundException;
 import com.hilal.Chronos_Scheduler.factories.JobExecutionFactory;
 import com.hilal.Chronos_Scheduler.repository.JobExecutionRepository;
 import com.hilal.Chronos_Scheduler.service.JobExecutionService;
@@ -44,7 +45,7 @@ public class JobExecutionServiceImpl implements JobExecutionService {
     @Override
     public JobExecutionResponseDto getJobExecutionById_service(long id) {
         JobExecution jobExecution = jobExecutionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("JobExecution not found"));
+                .orElseThrow(() -> new NotFoundException("JobExecution not found"));
         return JobExecutionMapper.toJobExecutionResponseDto(jobExecution);
     }
 

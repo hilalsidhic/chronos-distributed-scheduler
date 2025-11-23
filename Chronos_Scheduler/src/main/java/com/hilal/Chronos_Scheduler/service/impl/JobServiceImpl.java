@@ -4,6 +4,8 @@ import com.hilal.Chronos_Scheduler.entities.Job;
 import com.hilal.Chronos_Scheduler.entities.dtos.JobRequestDto;
 import com.hilal.Chronos_Scheduler.entities.dtos.JobResponseDto;
 import com.hilal.Chronos_Scheduler.entities.enums.Status;
+import com.hilal.Chronos_Scheduler.exceptions.types.BadRequestException;
+import com.hilal.Chronos_Scheduler.exceptions.types.NotFoundException;
 import com.hilal.Chronos_Scheduler.factories.JobFactory;
 import com.hilal.Chronos_Scheduler.entities.mapper.JobMapper;
 import com.hilal.Chronos_Scheduler.repository.JobRepository;
@@ -30,25 +32,31 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobResponseDto createJob_service(JobRequestDto jobRequestDto) {
         Job job = jobRepository.save(jobFactory.createJob(jobRequestDto, false));
+        if(job==null) {
+            throw new RuntimeException("Failed to create job");
+        }
         return JobMapper.mapJobToJobResponseDto(job);
     }
 
     @Override
     public JobResponseDto createRecurringJob_service(JobRequestDto jobRequestDto) {
         Job job = jobRepository.save(jobFactory.createJob(jobRequestDto, true));
+        if(job==null) {
+            throw new RuntimeException("Failed to create recurring job");
+        }
         return JobMapper.mapJobToJobResponseDto(job);
     }
 
     @Override
     public JobResponseDto getJobById_service(long id) {
-        Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+        Job job = jobRepository.findById(id).orElseThrow(() -> new NotFoundException("Job not found"));
         return JobMapper.mapJobToJobResponseDto(job);
     }
 
     @Override
     public void deleteJobById_service(long id) {
         if(!jobRepository.existsById(id)) {
-            throw new RuntimeException("Job not found");
+            throw new NotFoundException("Job not found");
         }
         jobRepository.deleteById(id);
         return;
@@ -58,6 +66,9 @@ public class JobServiceImpl implements JobService {
     @Override
     public List<JobResponseDto> getAllJobs_service() {
         List<Job> AllJobs = jobRepository.findAll();
+        if(AllJobs.isEmpty()) {
+            throw new NotFoundException("No jobs found");
+        }
         return AllJobs.stream()
                 .map(JobMapper::mapJobToJobResponseDto)
                 .collect(Collectors.toList());

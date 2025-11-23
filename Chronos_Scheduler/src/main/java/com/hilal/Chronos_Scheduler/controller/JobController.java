@@ -4,7 +4,9 @@ import com.hilal.Chronos_Scheduler.entities.dtos.JobRequestDto;
 import com.hilal.Chronos_Scheduler.entities.dtos.JobResponseDto;
 import com.hilal.Chronos_Scheduler.service.JobExecutionService;
 import com.hilal.Chronos_Scheduler.service.JobService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +22,15 @@ public class JobController {
     private JobExecutionService jobExecutionService;
 
     @PostMapping("/jobs")
-    public ResponseEntity<JobResponseDto> createJob(@RequestBody JobRequestDto jobRequestDto) {
+    public ResponseEntity<JobResponseDto> createJob(@Valid @RequestBody JobRequestDto jobRequestDto) {
         JobResponseDto job = jobService.createJob_service(jobRequestDto);
-        return ResponseEntity.ok(job);
+        return ResponseEntity.status(HttpStatus.CREATED).body(job);
     }
 
     @PostMapping("/jobs/recurring")
-    public ResponseEntity<JobResponseDto> createRecurringJob(@RequestBody JobRequestDto jobRequestDto) {
+    public ResponseEntity<JobResponseDto> createRecurringJob(@Valid @RequestBody JobRequestDto jobRequestDto) {
         JobResponseDto job = jobService.createRecurringJob_service(jobRequestDto);
-        return ResponseEntity.ok(job);
+        return ResponseEntity.status(HttpStatus.CREATED).body(job);
     }
 
     @GetMapping("/jobs/{id}")

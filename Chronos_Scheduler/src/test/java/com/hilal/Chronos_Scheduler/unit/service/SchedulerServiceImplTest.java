@@ -1,10 +1,12 @@
-package com.hilal.Chronos_Scheduler.service;
+package com.hilal.Chronos_Scheduler.unit.service;
 
 import com.hilal.Chronos_Scheduler.entities.Job;
 import com.hilal.Chronos_Scheduler.entities.JobExecution;
 import com.hilal.Chronos_Scheduler.entities.enums.Status;
 import com.hilal.Chronos_Scheduler.repository.JobExecutionRepository;
 import com.hilal.Chronos_Scheduler.repository.JobRepository;
+import com.hilal.Chronos_Scheduler.service.JobExecutionStateService;
+import com.hilal.Chronos_Scheduler.service.JobStateService;
 import com.hilal.Chronos_Scheduler.service.impl.SchedulerServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
