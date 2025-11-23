@@ -10,6 +10,7 @@ import com.hilal.Chronos_Scheduler.service.JobExecutionStateService;
 import com.hilal.Chronos_Scheduler.service.JobStateService;
 import com.hilal.Chronos_Scheduler.service.SchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@ConditionalOnProperty(value = "scheduler.enabled", havingValue = "true", matchIfMissing = true)
 public class SchedulerServiceImpl implements SchedulerService {
     @Autowired
     private JobRepository jobRepository;

@@ -33,6 +33,7 @@ public class Job {
     private int intervalSeconds;
     private OffsetDateTime nextExecutionTime;
     private int retryCount;
+
     private int maxRetry;
     private int maxExecutionTime;
 

@@ -1,4 +1,4 @@
-package com.hilal.Chronos_Scheduler.service;
+package com.hilal.Chronos_Scheduler.unit.service;
 
 import com.hilal.Chronos_Scheduler.entities.Job;
 import com.hilal.Chronos_Scheduler.entities.JobExecution;

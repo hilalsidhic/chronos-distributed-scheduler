@@ -1,10 +1,12 @@
-package com.hilal.Chronos_Scheduler.repository;
+package com.hilal.Chronos_Scheduler.unit.repository;
 
 import com.hilal.Chronos_Scheduler.config.AbstractPostgresTest;
 import com.hilal.Chronos_Scheduler.entities.Job;
 import com.hilal.Chronos_Scheduler.entities.JobExecution;
 import com.hilal.Chronos_Scheduler.entities.enums.ExecutionStatus;
 import com.hilal.Chronos_Scheduler.entities.enums.Status;
+import com.hilal.Chronos_Scheduler.repository.JobExecutionRepository;
+import com.hilal.Chronos_Scheduler.repository.JobRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

@@ -1,5 +1,6 @@
-package com.hilal.Chronos_Scheduler.controller;
+package com.hilal.Chronos_Scheduler.unit.controller;
 
+import com.hilal.Chronos_Scheduler.controller.JobExecutionController;
 import com.hilal.Chronos_Scheduler.entities.dtos.JobExecutionResponseDto;
 import com.hilal.Chronos_Scheduler.service.JobExecutionService;
 import org.junit.jupiter.api.BeforeEach;

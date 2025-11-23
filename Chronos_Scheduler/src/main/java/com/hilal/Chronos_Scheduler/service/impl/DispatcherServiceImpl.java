@@ -8,12 +8,15 @@ import com.hilal.Chronos_Scheduler.service.DispatcherService;
 import com.hilal.Chronos_Scheduler.service.JobExecutionService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.BlockingQueue;
 
 @Service
+@ConditionalOnProperty(value = "dispatcher.enabled", havingValue = "true", matchIfMissing = true)
 public class DispatcherServiceImpl implements DispatcherService {
 
     @Autowired
