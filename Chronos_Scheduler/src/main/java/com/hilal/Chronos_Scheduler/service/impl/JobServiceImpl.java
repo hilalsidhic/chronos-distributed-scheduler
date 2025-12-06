@@ -29,6 +29,7 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private JobFactory jobFactory;
 
+    @Transactional
     @Override
     public JobResponseDto createJob_service(JobRequestDto jobRequestDto) {
         Job job = jobRepository.save(jobFactory.createJob(jobRequestDto, false));
@@ -38,6 +39,7 @@ public class JobServiceImpl implements JobService {
         return JobMapper.mapJobToJobResponseDto(job);
     }
 
+    @Transactional
     @Override
     public JobResponseDto createRecurringJob_service(JobRequestDto jobRequestDto) {
         Job job = jobRepository.save(jobFactory.createJob(jobRequestDto, true));
@@ -54,18 +56,20 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional
     public void deleteJobById_service(long id) {
         if(!jobRepository.existsById(id)) {
             throw new NotFoundException("Job not found");
         }
-        jobRepository.deleteById(id);
+        jobRepository.updateIsDeletedById(true, id);
+        jobRepository.updateIsEnabledById(false, id);
         return;
     }
 
 
     @Override
     public List<JobResponseDto> getAllJobs_service() {
-        List<Job> AllJobs = jobRepository.findAll();
+        List<Job> AllJobs = jobRepository.findAllNotDeleted();
         if(AllJobs.isEmpty()) {
             throw new NotFoundException("No jobs found");
         }

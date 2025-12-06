@@ -1,0 +1,82 @@
+{
+  "v": 1,
+  "collections": [
+    {
+      "id": "chronos-scheduler",
+      "name": "Chronos Scheduler API",
+      "folders": [],
+      "requests": [
+        {
+          "id": "create-job",
+          "name": "Create Job",
+          "method": "POST",
+          "url": "http://localhost:8080/jobs",
+          "headers": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"name\": \"Sample Job\",\n  \"payload\": {\n    \"url\": \"https://example.com/api\",\n    \"method\": \"POST\",\n    \"headers\": {\"Content-Type\": \"application/json\"},\n    \"body\": \"{ \\\"foo\\\": \\\"bar\\\" }\"\n  },\n  \"intervalSeconds\": 60,\n  \"maxRetry\": 3,\n  \"maxExecutionTime\": 30,\n  \"nextExecutionTime\": \"2025-12-01T06:00:00Z\"\n}"
+          }
+        },
+        {
+          "id": "create-recurring-job",
+          "name": "Create Recurring Job",
+          "method": "POST",
+          "url": "http://localhost:8080/jobs/recurring",
+          "headers": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": {
+            "type": "json",
+            "raw": "{\n  \"name\": \"Daily Report\",\n  \"payload\": {\n    \"url\": \"https://example.com/api/report\",\n    \"method\": \"POST\",\n    \"headers\": {\"Content-Type\": \"application/json\"},\n    \"body\": \"{ \\\"date\\\": \\\"2025-12-01\\\" }\"\n  },\n  \"intervalSeconds\": 86400,\n  \"maxRetry\": 5,\n  \"maxExecutionTime\": 60,\n  \"nextExecutionTime\": \"2025-12-01T06:00:00Z\"\n}"
+          }
+        },
+        {
+          "id": "get-job-by-id",
+          "name": "Get Job by ID",
+          "method": "GET",
+          "url": "http://localhost:8080/jobs/{{id}}",
+          "params": [
+            { "key": "id", "value": "1" }
+          ]
+        },
+        {
+          "id": "delete-job",
+          "name": "Delete Job",
+          "method": "DELETE",
+          "url": "http://localhost:8080/jobs/{{id}}",
+          "params": [
+            { "key": "id", "value": "1" }
+          ]
+        },
+        {
+          "id": "list-jobs",
+          "name": "List All Jobs",
+          "method": "GET",
+          "url": "http://localhost:8080/jobs"
+        },
+        {
+          "id": "get-executions",
+          "name": "Get Executions of Job",
+          "method": "GET",
+          "url": "http://localhost:8080/jobs/{{id}}/executions",
+          "params": [
+            { "key": "id", "value": "1" },
+            { "key": "limit", "value": "10" },
+            { "key": "offset", "value": "0" }
+          ]
+        },
+        {
+          "id": "get-execution-by-id",
+          "name": "Get Execution by ID",
+          "method": "GET",
+          "url": "http://localhost:8080/executions/{{id}}",
+          "params": [
+            { "key": "id", "value": "1" }
+          ]
+        }
+      ]
+    }
+  ]
+}

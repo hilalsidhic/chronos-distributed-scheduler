@@ -39,6 +39,7 @@ public class Job {
 
     private OffsetDateTime reservedAt;
     private boolean isEnabled;
+    private boolean isDeleted;
 
     private String createdBy;
     private OffsetDateTime createdAt;

@@ -31,4 +31,12 @@ public class JobExecutionController {
         JobExecutionResponseDto execution = jobExecutionService.getJobExecutionById_service(id);
         return ResponseEntity.ok(execution);
     }
+
+    @GetMapping("/executions/")
+    public ResponseEntity<List<JobExecutionResponseDto>> getAllExecutions(
+            @RequestParam(defaultValue = "10") long limit,
+            @RequestParam(defaultValue = "0") long offset) {
+        List<JobExecutionResponseDto> executions = jobExecutionService.getAllJobExecutions(limit, offset);
+        return ResponseEntity.ok(executions);
+    }
 }

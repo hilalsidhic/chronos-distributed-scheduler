@@ -17,6 +17,7 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             SELECT * 
             FROM job_execution 
             WHERE status = 'FAILED'
+            AND is_preserved = FALSE
             FOR UPDATE SKIP LOCKED 
             LIMIT :limit
             """,
@@ -30,7 +31,8 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             value = """
             SELECT * 
             FROM job_execution 
-            WHERE status = 'TIMED_OUT'
+            WHERE (status = 'TIMED_OUT' OR status = 'STUCK')
+            AND is_preserved = FALSE
             FOR UPDATE SKIP LOCKED 
             LIMIT :limit
             """,
@@ -45,6 +47,7 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             SELECT * 
             FROM job_execution 
             WHERE status = 'SUCCESS'
+            AND is_preserved = FALSE
             FOR UPDATE SKIP LOCKED 
             LIMIT :limit
             """,
@@ -68,6 +71,23 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
     )
     List<JobExecution> findByJobId(
             @Param("jobId") long jobId,
+            @Param("limit") long limit,
+            @Param("offset") long offset
+    );
+
+    @Query(
+            value = """
+            SELECT je.*
+            FROM job_execution je
+            JOIN job j ON j.id = je.job_id
+            WHERE j.is_deleted = FALSE
+            ORDER BY je.started_at DESC
+            LIMIT :limit
+            OFFSET :offset
+            """,
+            nativeQuery = true
+    )
+    List<JobExecution> findAllJobExecutions(
             @Param("limit") long limit,
             @Param("offset") long offset
     );

@@ -30,7 +30,7 @@ public class JobExecution {
     private ExecutionStatus status;
     private OffsetDateTime startedAt;
     private OffsetDateTime finishedAt;
-    private OffsetDateTime lastHearbeatAt;
+    private OffsetDateTime lastHeartbeatAt;
     private int maxExecutionTime;
 
     @Type(JsonType.class)
@@ -39,6 +39,8 @@ public class JobExecution {
 
     private int retryNumber;
     private boolean isPickedByWorker;
+    private OffsetDateTime createdAt;
+    private boolean isPreserved;
 
     @Column(columnDefinition = "TEXT")
     private String log;
