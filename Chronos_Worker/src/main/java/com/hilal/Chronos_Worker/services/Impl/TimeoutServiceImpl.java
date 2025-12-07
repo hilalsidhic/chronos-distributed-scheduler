@@ -6,6 +6,7 @@ import com.hilal.Chronos_Worker.engines.WorkerEngine;
 import com.hilal.Chronos_Worker.entities.dtos.RunningJobContext;
 import com.hilal.Chronos_Worker.services.TimeoutService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +23,13 @@ public class TimeoutServiceImpl implements TimeoutService {
     @Autowired
     private WorkerEngine workerEngine;
 
+    @Value("${worker.max.executions.timedout:10}")
+    private int maxExecutionsInTimedOut;
+
     @Scheduled(fixedRate = 60000)
     @Override
     public void fetchTimedOutJobExecution_DB() {
-        List<Long> timedOutJobExecutionIds = timeoutEngine.fetchTimedOutJobExecutions();
+        List<Long> timedOutJobExecutionIds = timeoutEngine.fetchTimedOutJobExecutions(maxExecutionsInTimedOut);
         if (timedOutJobExecutionIds.isEmpty()) {
             return;
         }
@@ -39,6 +43,7 @@ public class TimeoutServiceImpl implements TimeoutService {
         }
         return;
     }
+
     @Scheduled(fixedRate = 5000)
     @Override
     public void fetchTimedOutJobExecution_local() {

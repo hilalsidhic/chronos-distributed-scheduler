@@ -18,9 +18,9 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             "WHERE status = 'PENDING' " +
             "ORDER BY created_at ASC " +
             "FOR UPDATE SKIP LOCKED " +
-            "LIMIT 10",
+            "LIMIT :limit",
             nativeQuery = true)
-    List<JobExecution> lockPendingJobExecutions();
+    List<JobExecution> lockPendingJobExecutions(@Param("limit") int limit);
 
 
     @Modifying(clearAutomatically = true)
@@ -38,9 +38,9 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
         WHERE status = 'RUNNING'
           AND is_picked_by_worker = TRUE
           AND last_heartbeat_at < NOW() - INTERVAL '15 seconds'
-        LIMIT 10
+        LIMIT :limit
         """, nativeQuery = true)
-    List<Long> findStuckJobExecutionIds();
+    List<Long> findStuckJobExecutionIds(@Param("limit") int limit);
 
 
     @Modifying(clearAutomatically = true)
@@ -69,9 +69,9 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
         FROM job_execution
         WHERE status = 'RUNNING'
         AND started_at + (max_execution_time * INTERVAL '1 second') < NOW()
-        LIMIT 10
+        LIMIT :limit
         """, nativeQuery = true)
-    List<Long> findTimedOutJobExecutionIds();
+    List<Long> findTimedOutJobExecutionIds(@Param("limit") int limit);
 
 
     @Modifying(clearAutomatically = true)

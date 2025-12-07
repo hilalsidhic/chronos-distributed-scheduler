@@ -63,7 +63,7 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             SELECT * 
             FROM job_execution 
             WHERE job_id = :jobId
-            ORDER BY started_at DESC
+            ORDER BY last_heartbeat_at DESC
             LIMIT :limit
             OFFSET :offset
             """,
@@ -81,7 +81,7 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             FROM job_execution je
             JOIN job j ON j.id = je.job_id
             WHERE j.is_deleted = FALSE
-            ORDER BY je.started_at DESC
+            ORDER BY je.last_heartbeat_at DESC
             LIMIT :limit
             OFFSET :offset
             """,
@@ -91,4 +91,27 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             @Param("limit") long limit,
             @Param("offset") long offset
     );
+
+    @Query(
+            value = """
+            SELECT COUNT(*)
+            FROM job_execution je
+            JOIN job j ON j.id = je.job_id
+            WHERE j.is_deleted = FALSE
+            """,
+            nativeQuery = true
+    )
+    long countAllJobExecutions();
+
+    @Query(
+        value = """
+        SELECT COUNT(*) 
+        FROM job_execution je
+        JOIN job j ON j.id = je.job_id
+        WHERE j.is_deleted = FALSE 
+        AND je.status = :status
+        """,
+            nativeQuery = true)
+    long countByStatus(@Param("status") String status);
+
 }

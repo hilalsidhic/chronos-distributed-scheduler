@@ -2,20 +2,15 @@ package com.hilal.Chronos_Worker.engines;
 
 import com.hilal.Chronos_Worker.entities.dtos.HttpResult;
 import com.hilal.Chronos_Worker.entities.dtos.WorkerPayload;
-
-// --- CORRECTED IMPORTS START ---
 import org.apache.hc.client5.http.classic.methods.*;
-import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntityContainer; // Was missing
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.apache.hc.core5.util.Timeout;
-// --- CORRECTED IMPORTS END ---
-
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -26,56 +21,24 @@ public class HttpEngine {
 
     private final CloseableHttpClient client;
 
-    public HttpEngine() {
-        this.client = HttpClients.custom()
-                .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectTimeout(Timeout.ofSeconds(5))
-                        .setResponseTimeout(Timeout.DISABLED)
-                        .build())
-                .build();
+    // Constructor Injection (Spring picks up the Bean from HttpClientConfig)
+    public HttpEngine(CloseableHttpClient client) {
+        this.client = client;
     }
 
     public HttpResult execute(WorkerPayload payload) {
-
         String method = payload.getMethod().toUpperCase();
+        ClassicHttpRequest request = createRequest(method, payload.getUrl());
 
-        ClassicHttpRequest request;
-
-        // CREATE REQUEST OBJECT
-        switch (method) {
-            case "GET":
-                request = new HttpGet(payload.getUrl());
-                break;
-            case "DELETE":
-                request = new HttpDelete(payload.getUrl());
-                break;
-            case "HEAD":
-                request = new HttpHead(payload.getUrl());
-                break;
-            case "PUT":
-                request = new HttpPut(payload.getUrl());
-                break;
-            case "PATCH":
-                request = new HttpPatch(payload.getUrl());
-                break;
-            case "POST":
-            default:
-                request = new HttpPost(payload.getUrl());
-                break;
-        }
-
-        // HEADERS
+        // 1. ADD HEADERS
         if (payload.getHeaders() != null) {
             payload.getHeaders().forEach(request::addHeader);
         }
 
-        // BODY (only for POST/PUT/PATCH)
-        // This requires the HttpEntityContainer import added above
-        if (request instanceof HttpEntityContainer) {
-            String bodyString = payload.getBody() != null
-                    ? payload.getBody().toString()
-                    : "";
-
+        // 2. ADD BODY (For POST, PUT, PATCH)
+        if (request instanceof HttpEntityContainer && payload.getBody() != null) {
+            String bodyString = payload.getBody().toString();
+            // Defaulting to JSON. If your payload supports other types, pass it in WorkerPayload
             ((HttpEntityContainer) request).setEntity(
                     new StringEntity(bodyString, ContentType.APPLICATION_JSON)
             );
@@ -86,37 +49,63 @@ public class HttpEngine {
         try (CloseableHttpResponse response = client.execute(request)) {
 
             long duration = System.currentTimeMillis() - start;
-
             String responseBody = "";
+            HttpEntity entity = response.getEntity();
 
-            // Check if entity exists before reading
-            if (response.getEntity() != null) {
-                // Using StandardCharsets directly inside the constructor
-                responseBody = new String(response.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8);
+            // 3. SAFE RESPONSE READING
+            if (entity != null) {
+                // EntityUtils handles charset detection and stream closing automatically
+                responseBody = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+
+                // SAFETY: Truncate very large responses to prevent OutOfMemoryError
+                if (responseBody != null && responseBody.length() > 100_000) {
+                    responseBody = responseBody.substring(0, 100_000) + " ...[TRUNCATED]";
+                }
             }
 
+            int code = response.getCode();
+
             return HttpResult.builder()
-                    .statusCode(response.getCode())
+                    .statusCode(code)
                     .responseBody(responseBody)
                     .durationMs(duration)
-                    .success(response.getCode() < 500)
+                    // Success is strictly 2xx. 404 or 500 are considered failed jobs.
+                    .success(code >= 200 && code < 300)
                     .build();
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            // Network failures (Connection refused, Timeout, DNS failure)
             return HttpResult.builder()
+                    .statusCode(0) // 0 indicates request didn't complete HTTP handshake
                     .success(false)
-                    .error("IO Error: " + ex.getMessage())
-                    .durationMs(0)
+                    .error("Network Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage())
+                    .durationMs(System.currentTimeMillis() - start)
                     .build();
 
         } catch (Exception ex) {
+            // Unexpected application errors
             ex.printStackTrace();
             return HttpResult.builder()
+                    .statusCode(0)
                     .success(false)
-                    .error(ex.getMessage())
-                    .durationMs(0)
+                    .error("Internal Error: " + ex.getMessage())
+                    .durationMs(System.currentTimeMillis() - start)
                     .build();
+        }
+    }
+
+    /**
+     * Helper to map string method to Apache HTTP Request object
+     */
+    private ClassicHttpRequest createRequest(String method, String url) {
+        switch (method) {
+            case "GET":    return new HttpGet(url);
+            case "DELETE": return new HttpDelete(url);
+            case "HEAD":   return new HttpHead(url);
+            case "PUT":    return new HttpPut(url);
+            case "PATCH":  return new HttpPatch(url);
+            case "POST":   return new HttpPost(url);
+            default:       return new HttpPost(url); // Default to POST or throw exception
         }
     }
 }

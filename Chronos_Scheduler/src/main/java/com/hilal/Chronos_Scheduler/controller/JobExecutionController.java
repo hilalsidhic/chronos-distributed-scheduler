@@ -1,6 +1,8 @@
 package com.hilal.Chronos_Scheduler.controller;
 
+import com.hilal.Chronos_Scheduler.entities.dtos.ExecutionStatsResponse;
 import com.hilal.Chronos_Scheduler.entities.dtos.JobExecutionResponseDto;
+import com.hilal.Chronos_Scheduler.entities.dtos.PaginatedExecutionResponse;
 import com.hilal.Chronos_Scheduler.service.JobExecutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +35,16 @@ public class JobExecutionController {
     }
 
     @GetMapping("/executions/")
-    public ResponseEntity<List<JobExecutionResponseDto>> getAllExecutions(
+    public ResponseEntity<PaginatedExecutionResponse> getAllExecutions(
             @RequestParam(defaultValue = "10") long limit,
             @RequestParam(defaultValue = "0") long offset) {
-        List<JobExecutionResponseDto> executions = jobExecutionService.getAllJobExecutions(limit, offset);
-        return ResponseEntity.ok(executions);
+        PaginatedExecutionResponse response = jobExecutionService.getAllJobExecutions(limit, offset);
+        return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/executions/stats")
+    public ResponseEntity<ExecutionStatsResponse> getExecutionStats() {
+        return ResponseEntity.ok(jobExecutionService.getExecutionStats());
+    }
+
 }
