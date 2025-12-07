@@ -81,7 +81,12 @@ public class ExecutorServiceImpl implements ExecutorService {
             if (httpResult.getStatusCode() >= 200 && httpResult.getStatusCode() < 300) {
                 updateJob(jobExecution,logUpdate,ExecutionStatus.SUCCESS);
                 jobsCompleted.increment();
-            } else {
+            }
+            else if(httpResult.getStatusCode() == 408){
+                updateJob(jobExecution,logUpdate,ExecutionStatus.TIMED_OUT);
+                jobsFailed.increment();
+            }
+            else {
                 updateJob(jobExecution,logUpdate,ExecutionStatus.FAILED);
                 jobsFailed.increment();
             }

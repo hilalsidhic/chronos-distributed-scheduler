@@ -25,8 +25,8 @@ public class HeartbeatEngine {
     }
 
     @Transactional
-    public List<Long> getStuckHeartbeats() {
-        return jobExecutionRepository.findStuckJobExecutionIds();
+    public List<Long> getStuckHeartbeats(int limit) {
+        return jobExecutionRepository.findStuckJobExecutionIds(limit);
     }
 
     @Transactional

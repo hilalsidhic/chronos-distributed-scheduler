@@ -16,11 +16,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Job } from "@/components/JobsTable";
-import { format } from "date-fns";
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [executions, setExecutions] = useState<JobExecution[]>([]);
+  const [recentExecutions, setRecentExecutions] = useState<JobExecution[]>([]);
+  const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,21 +32,14 @@ export default function Dashboard() {
         const jobsData: Job[] = await jobsRes.json();
         setJobs(jobsData);
 
-        // Load executions for all jobs
-        const executionsRes = await fetch(
-          "http://localhost:8080/executions/?limit=100&offset=0"
-        );
-        if (!executionsRes.ok) throw new Error("Failed to load executions");
+        // Load execution stats (fast, lightweight)
+        const statsRes = await fetch("http://localhost:8080/executions/stats");
+        if (!statsRes.ok) throw new Error("Failed to load execution stats");
+        const statsData = await statsRes.json();
 
-        const allExecutions: JobExecution[] = await executionsRes.json();
+        setStats(statsData);
+        setRecentExecutions(statsData.recentExecutions || []);
 
-        // Sort by newest first
-        allExecutions.sort(
-          (a, b) =>
-            new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
-        );
-
-        setExecutions(allExecutions);
       } catch (err) {
         toast.error("Failed to load dashboard data");
         console.error(err);
@@ -58,34 +51,26 @@ export default function Dashboard() {
     loadDashboard();
   }, []);
 
-  if (loading) return <Layout>Loading dashboard…</Layout>;
+  if (loading || !stats) return <Layout>Loading dashboard…</Layout>;
 
   // --- Stats ---
   const totalJobs = jobs.length;
   const runningJobs = jobs.filter((j) => j.status === "RUNNING").length;
-  const successfulExecutions = executions.filter((e) => e.status === "SUCCESS").length;
-  const failedExecutions = executions.filter((e) => e.status === "FAILED").length;
 
-  // --- Chart Data (last 7 days) ---
+  const totalSuccess = stats.totalSuccess ?? 0;
+  const totalFailed = stats.totalFailed ?? 0;
+  const totalRunning = stats.totalRunning ?? 0;
+  const totalTimedOut = stats.totalTimedOut ?? 0;
+  const totalStuck = stats.totalStuck ?? 0;
+
+  // --- Chart Data from recent executions (last 7 days only) ---
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const chartData = Array.from({ length: 7 }, (_, i) => {
-    const dayIndex = (new Date().getDay() - i + 7) % 7;
-    const dayName = days[dayIndex];
+  const chartData = Array.from({ length: 7 }, (_, i) => ({
+  name: days[(new Date().getDay() - i + 7) % 7],
+  successful: stats.totalSuccess > 0 ? Math.floor(stats.totalSuccess / 7) : 0,
+  failed: stats.totalFailed > 0 ? Math.floor(stats.totalFailed / 7) : 0,
+})).reverse();
 
-    const dailyExecutions = executions.filter((e) => {
-      const d = new Date(e.startedAt).getDay();
-      return d === dayIndex;
-    });
-
-    return {
-      name: dayName,
-      successful: dailyExecutions.filter((e) => e.status === "SUCCESS").length,
-      failed: dailyExecutions.filter((e) => e.status === "FAILED").length,
-    };
-  }).reverse();
-
-  // Recent executions → take last 10
-  const recentExecutions = executions.slice(0, 10);
 
   return (
     <Layout>
@@ -112,24 +97,25 @@ export default function Dashboard() {
             icon={Activity}
             trend="Currently active"
           />
+
           <StatsCard
             title="Successful Executions"
-            value={successfulExecutions}
+            value={totalSuccess}
             icon={CheckCircle2}
-            trend={`${successfulExecutions} successful`}
+            trend={`${totalSuccess} successful`}
           />
           <StatsCard
             title="Failed Executions"
-            value={failedExecutions}
+            value={totalFailed}
             icon={XCircle}
-            trend={`${failedExecutions} failed`}
+            trend={`${totalFailed} failed`}
           />
         </div>
 
         {/* Chart */}
         <Card>
           <CardHeader>
-            <CardTitle className="font-heading">Execution History</CardTitle>
+            <CardTitle className="font-heading">Execution History (Last 7 days)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>

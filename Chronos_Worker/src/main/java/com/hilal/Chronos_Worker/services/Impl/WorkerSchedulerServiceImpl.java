@@ -7,6 +7,7 @@ import com.hilal.Chronos_Worker.entities.enums.ExecutionStatus;
 import com.hilal.Chronos_Worker.repositories.JobExecutionRepository;
 import com.hilal.Chronos_Worker.services.WorkerSchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,9 @@ public class WorkerSchedulerServiceImpl implements WorkerSchedulerService {
 
     @Autowired
     private WorkerEngine workerEngine;
+
+    @Value("${worker.max.jobs.process:10}")
+    private int maxJobsToProcess;
 
     @Override
     @Scheduled(fixedRate = 2000)
@@ -51,9 +55,10 @@ public class WorkerSchedulerServiceImpl implements WorkerSchedulerService {
         }
     }
 
+    @Override
     @Transactional
     public List<JobExecution> getJobsAndSetToRunning() {
-        List<JobExecution> jobExecutions = jobExecutionRepository.lockPendingJobExecutions();
+        List<JobExecution> jobExecutions = jobExecutionRepository.lockPendingJobExecutions(maxJobsToProcess);
         if (jobExecutions.isEmpty()) {
             return jobExecutions;
         }
@@ -66,6 +71,7 @@ public class WorkerSchedulerServiceImpl implements WorkerSchedulerService {
         return jobExecutions;
     }
 
+    @Override
     @Scheduled(fixedRate = 8000)
     public void reconcileWorkerState() {
         Map<Long, RunningJobContext> running = workerEngine.getRunningJobs();

@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Job } from "@/components/JobsTable";
 
 export default function Executions() {
   const [executions, setExecutions] = useState<JobExecution[]>([]);
@@ -19,24 +18,37 @@ export default function Executions() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
 
+  // Pagination states
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(50);
+  const [hasNext, setHasNext] = useState(false);
+  const [total, setTotal] = useState(0);
+
   useEffect(() => {
     async function loadExecutions() {
       try {
-         // Load executions for all jobs
+        setLoading(true);
+
         const executionsRes = await fetch(
-          "http://localhost:8080/executions/?limit=100&offset=0"
+          `http://localhost:8080/executions/?limit=${limit}&offset=${page * limit}`
         );
+
         if (!executionsRes.ok) throw new Error("Failed to load executions");
 
-        const allExecutions: JobExecution[] = await executionsRes.json();
+        const data = await executionsRes.json();
 
-        // Sort by newest first
-        allExecutions.sort(
-          (a, b) =>
-            new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
-        );
+        // If backend returns a list → fallback
+        if (Array.isArray(data)) {
+          setExecutions(data);
+          setHasNext(false);
+          setTotal(data.length);
+        } else {
+          // If backend returns paginated format
+          setExecutions(data.items || []);
+          setHasNext(data.hasNext ?? false);
+          setTotal(data.total ?? 0);
+        }
 
-        setExecutions(allExecutions);
       } catch (err) {
         toast.error("Failed to load execution history");
         console.error(err);
@@ -46,8 +58,9 @@ export default function Executions() {
     }
 
     loadExecutions();
-  }, []);
+  }, [page, limit]); // Reload when page or limit changes
 
+  // Client-side filtering (search & status)
   const filteredExecutions = executions.filter((execution) => {
     const matchesSearch = execution.jobName
       .toLowerCase()
@@ -70,7 +83,7 @@ export default function Executions() {
             Executions
           </h1>
           <p className="text-muted-foreground mt-2">
-            View all job execution history and logs
+            View all job execution history with pagination
           </p>
         </div>
 
@@ -99,10 +112,45 @@ export default function Executions() {
               <SelectItem value="STUCK">Stuck</SelectItem>
             </SelectContent>
           </Select>
+
+          {/* Page size selector */}
+          <Select value={String(limit)} onValueChange={(v) => setLimit(Number(v))}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Rows per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Executions Table */}
         <ExecutionsTable executions={filteredExecutions} />
+
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center pt-4">
+          <button
+            disabled={page === 0}
+            onClick={() => setPage(page - 1)}
+            className="px-4 py-2 bg-muted hover:bg-muted/80 rounded-md disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          <p className="text-muted-foreground">
+            Page {page + 1} • Showing {filteredExecutions.length} of {total}
+          </p>
+
+          <button
+            disabled={!hasNext}
+            onClick={() => setPage(page + 1)}
+            className="px-4 py-2 bg-muted hover:bg-muted/80 rounded-md disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </Layout>
   );

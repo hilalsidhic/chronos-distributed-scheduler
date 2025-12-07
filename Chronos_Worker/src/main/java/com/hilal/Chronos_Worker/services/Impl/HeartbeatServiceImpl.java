@@ -6,6 +6,7 @@ import com.hilal.Chronos_Worker.entities.JobExecution;
 import com.hilal.Chronos_Worker.entities.dtos.RunningJobContext;
 import com.hilal.Chronos_Worker.services.HeartbeatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ public class HeartbeatServiceImpl implements HeartbeatService {
 
     @Autowired
     private WorkerEngine workerEngine;
+
+    @Value("${worker.max.executions.stuck:10}")
+    private int maxExecutionsInStuck;
 
     @Scheduled(fixedRate = 5000)
     @Override
@@ -38,7 +42,7 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     @Scheduled(fixedRate = 10000)
     @Override
     public void cleanUpStuckHeartbeats() {
-        List<Long> stuckJobExecutionIds = heartbeatEngine.getStuckHeartbeats();
+        List<Long> stuckJobExecutionIds = heartbeatEngine.getStuckHeartbeats(maxExecutionsInStuck);
         if (stuckJobExecutionIds.isEmpty()) {
             return;
         }

@@ -11,5 +11,5 @@ public class ChronosWorkerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChronosWorkerApplication.class, args);
 	}
-
+	
 }

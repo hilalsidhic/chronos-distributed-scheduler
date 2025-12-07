@@ -13,8 +13,8 @@ public class TimeoutEngine {
     @Autowired
     private JobExecutionRepository jobExecutionRepository;
 
-    public List<Long> fetchTimedOutJobExecutions() {
-        return jobExecutionRepository.findTimedOutJobExecutionIds();
+    public List<Long> fetchTimedOutJobExecutions(int limit) {
+        return jobExecutionRepository.findTimedOutJobExecutionIds(limit);
     }
 
     @Transactional

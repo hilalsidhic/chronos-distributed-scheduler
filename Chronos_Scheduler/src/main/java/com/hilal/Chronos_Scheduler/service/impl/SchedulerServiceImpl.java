@@ -10,6 +10,7 @@ import com.hilal.Chronos_Scheduler.service.JobExecutionStateService;
 import com.hilal.Chronos_Scheduler.service.JobStateService;
 import com.hilal.Chronos_Scheduler.service.SchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,18 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Autowired
     private JobStateService jobStateService;
 
+    @Value("${scheduler.max.jobs.process:10}")
+    private int maxJobsToProcess;
+
+    @Value("${scheduler.max.jobs.success:10}")
+    private int maxSuccessfulJobsExecutionsToPreserve;
+
+    @Value("${scheduler.max.jobs.failed:10}")
+    private int maxFailedJobsExecutionsToPreserve;
+
+    @Value("${scheduler.max.jobs.timedout:10}")
+    private int maxTimedOutJobsExecutionsToPreserve;
+
     @Override
     @Scheduled(fixedRate = 60000)
     public void resetStatusReservedJobs_service() {
@@ -50,7 +63,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     @Scheduled(fixedRate = 2000)
     public void getJobsToExecute_service() {
-        List<Job> jobsToExecute = jobStateService.getJobsToExecuteBatch(10);
+        List<Job> jobsToExecute = jobStateService.getJobsToExecuteBatch(maxJobsToProcess);
         if (jobsToExecute.isEmpty()) return;
         for (Job job : jobsToExecute) {
             try {
@@ -69,7 +82,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 5000)
     @Transactional
     public void getCompletedJobExecutions_service() {
-        List<JobExecution> completedJobs = jobExecutionStateService.setCompletedJobExecutionAsPreserved(10);
+        List<JobExecution> completedJobs = jobExecutionStateService.setCompletedJobExecutionAsPreserved(maxSuccessfulJobsExecutionsToPreserve);
         if (completedJobs.isEmpty()) return;
         for(JobExecution jobExecution : completedJobs) {
             Job job = jobExecution.getJob();
@@ -89,7 +102,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void getFailedJobExecutions_service() {
-        List<JobExecution> failedJobs = jobExecutionStateService.setFailedJobExecutionAsPreserved(10);
+        List<JobExecution> failedJobs = jobExecutionStateService.setFailedJobExecutionAsPreserved(maxFailedJobsExecutionsToPreserve);
         if (failedJobs.isEmpty()) return;
         for(JobExecution jobExecution : failedJobs) {
             Job job = jobExecution.getJob();
@@ -109,7 +122,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Scheduled(fixedRate = 15000)
     @Transactional
     public void getTimedOutJobExecutions_service() {
-        List<JobExecution> timedOutJobs = jobExecutionStateService.setTimedOutJobExecutionAsPreserved(10);
+        List<JobExecution> timedOutJobs = jobExecutionStateService.setTimedOutJobExecutionAsPreserved(maxTimedOutJobsExecutionsToPreserve);
          if (timedOutJobs.isEmpty()) return;
         for(JobExecution jobExecution : timedOutJobs) {
             Job job = jobExecution.getJob();
