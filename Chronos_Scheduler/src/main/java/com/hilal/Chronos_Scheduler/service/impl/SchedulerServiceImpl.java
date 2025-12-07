@@ -67,6 +67,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     @Scheduled(fixedRate = 5000)
+    @Transactional
     public void getCompletedJobExecutions_service() {
         List<JobExecution> completedJobs = jobExecutionStateService.setCompletedJobExecutionAsPreserved(10);
         if (completedJobs.isEmpty()) return;
@@ -79,17 +80,14 @@ public class SchedulerServiceImpl implements SchedulerService {
                 job.setEnabled(false);
                 job.setStatus(Status.COMPLETED);
             }
+            jobRepository.save(job);
         }
-        jobRepository.saveAll(
-                completedJobs.stream()
-                        .map(JobExecution::getJob)
-                        .toList()
-        );
         return;
     }
 
     @Override
     @Scheduled(fixedRate = 10000)
+    @Transactional
     public void getFailedJobExecutions_service() {
         List<JobExecution> failedJobs = jobExecutionStateService.setFailedJobExecutionAsPreserved(10);
         if (failedJobs.isEmpty()) return;
@@ -102,40 +100,33 @@ public class SchedulerServiceImpl implements SchedulerService {
                 job.setEnabled(false);
                 job.setStatus(Status.FAILED);
             }
+            jobRepository.save(job);
         }
-        jobRepository.saveAll(
-                failedJobs.stream()
-                        .map(JobExecution::getJob)
-                        .toList()
-        );
         return;
     }
 
-
     @Override
     @Scheduled(fixedRate = 15000)
+    @Transactional
     public void getTimedOutJobExecutions_service() {
         List<JobExecution> timedOutJobs = jobExecutionStateService.setTimedOutJobExecutionAsPreserved(10);
-        if (timedOutJobs.isEmpty()) return;
+         if (timedOutJobs.isEmpty()) return;
         for(JobExecution jobExecution : timedOutJobs) {
             Job job = jobExecution.getJob();
-            if(job.getRetryCount() >= job.getMaxRetry()) {
+            if(job.getRetryCount() >= job.getMaxRetry() - 1) {
                 job.setEnabled(false);
                 job.setStatus(Status.FAILED);
+                jobRepository.save(job);
                 continue;
             }
             else{
-                long backoffSeconds = job.getIntervalSeconds() * (1L << (job.getRetryCount())); // exponential
+                long backoffSeconds = 1L << (job.getRetryCount()); // exponential
                 job.setNextExecutionTime(OffsetDateTime.now().plusSeconds(backoffSeconds));
                 job.setRetryCount(job.getRetryCount() + 1);
                 job.setStatus(Status.PENDING);
             }
+            jobRepository.save(job);
         }
-        jobRepository.saveAll(
-                timedOutJobs.stream()
-                        .map(JobExecution::getJob)
-                        .toList()
-        );
         return;
     }
 }

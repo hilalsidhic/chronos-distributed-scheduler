@@ -54,4 +54,12 @@ public class JobExecutionServiceImpl implements JobExecutionService {
         jobExecutionRepository.save(jobExecutionFactory.createJobExecution(job));
         return;
     }
+
+    @Override
+    public List<JobExecutionResponseDto> getAllJobExecutions(long limit, long offset) {
+        List<JobExecution> jobExecutions =  jobExecutionRepository.findAllJobExecutions(limit,offset);
+        return jobExecutions.stream()
+                .map(JobExecutionMapper::toJobExecutionResponseDto)
+                .collect(Collectors.toList());
+    }
 }

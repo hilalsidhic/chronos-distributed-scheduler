@@ -12,4 +12,5 @@ public interface JobExecutionService {
     public List<JobExecutionResponseDto> getJobExecutionsByJobId_service(long jobId, long limit, long offset);
     public JobExecutionResponseDto getJobExecutionById_service(long id);
     public void createJobExecution(Job job);
+    public List<JobExecutionResponseDto> getAllJobExecutions(long limit, long offset);
 }
