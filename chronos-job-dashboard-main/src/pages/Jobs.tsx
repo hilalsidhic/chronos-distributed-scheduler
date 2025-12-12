@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { authService } from "@/auth/authService"; // Import authService
+import { API_BASE_URL } from "@/config";
 
 export default function Jobs() {
   const navigate = useNavigate();
@@ -23,18 +24,18 @@ export default function Jobs() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Get Token
+    // 2. Get Token
     const token = authService.getToken();
 
-    // 2. Redirect if not authenticated
+    // 3. Redirect if not authenticated
     if (!token) {
         toast.error("Please login first");
         navigate("/login");
         return;
     }
 
-    // 3. Fetch with Headers
-    fetch("http://localhost:8080/scheduler/jobs", {
+    // 4. Fetch with Headers (Updated URL)
+    fetch(`${API_BASE_URL}/scheduler/jobs`, {
         headers: {
             "Authorization": token,
             "Content-Type": "application/json"
@@ -57,7 +58,7 @@ export default function Jobs() {
         }
       })
       .finally(() => setLoading(false));
-  }, [navigate]);
+  }, [navigate, API_BASE_URL]);
 
   const handleDelete = (id: number) => {
     const token = authService.getToken();
@@ -66,7 +67,8 @@ export default function Jobs() {
         return;
     }
 
-    fetch(`http://localhost:8080/scheduler/jobs/${id}`, {
+    // 5. Delete with Headers (Updated URL)
+    fetch(`${API_BASE_URL}/scheduler/jobs/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": token,

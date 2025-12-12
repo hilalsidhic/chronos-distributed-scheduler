@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ArrowLeft, Save } from "lucide-react";
-import { authService } from "@/auth/authService"; // Import authService
+import { authService } from "@/auth/authService";
+import { API_BASE_URL } from "@/config";
 
 export default function CreateJob() {
   const navigate = useNavigate();
@@ -26,7 +27,6 @@ export default function CreateJob() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Get Token
     const token = authService.getToken();
     if (!token) {
       toast.error("Please login first");
@@ -35,7 +35,6 @@ export default function CreateJob() {
     }
 
     try {
-      // Validate JSON payload
       const parsedPayload = JSON.parse(formData.payload);
       const currentUser = authService.getCurrentUser();
       const createdBy = currentUser ? currentUser.email : "system";
@@ -50,21 +49,20 @@ export default function CreateJob() {
         nextExecutionTime: formData.nextExecutionTime || null,
       };
 
+      // 2. Updated Endpoint Construction
       const endpoint = isRecurring
-        ? "http://localhost:8080/scheduler/jobs/recurring"
-        : "http://localhost:8080/scheduler/jobs";
+        ? `${API_BASE_URL}/scheduler/jobs/recurring`
+        : `${API_BASE_URL}/scheduler/jobs`;
 
-      // 2. Send Request with Headers
       const res = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": token, // <--- Add Token Here
+          "Authorization": token,
         },
         body: JSON.stringify(requestBody),
       });
 
-      // 3. Handle Session Expiry
       if (res.status === 401) {
           authService.logout();
           navigate("/login");
@@ -85,11 +83,9 @@ export default function CreateJob() {
     }
   };
 
-
   return (
     <Layout>
       <div className="max-w-3xl space-y-6 animate-in fade-in duration-500">
-        {/* Header */}
         <div>
           <Button
             variant="ghost"
@@ -107,7 +103,6 @@ export default function CreateJob() {
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit}>
           <Card>
             <CardHeader>
@@ -117,7 +112,6 @@ export default function CreateJob() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Job Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Job Name *</Label>
                 <Input
@@ -131,7 +125,6 @@ export default function CreateJob() {
                 />
               </div>
 
-              {/* Payload */}
               <div className="space-y-2">
                 <Label htmlFor="payload">Payload (JSON) *</Label>
                 <Textarea
@@ -149,7 +142,6 @@ export default function CreateJob() {
                 </p>
               </div>
 
-              {/* Recurring Toggle */}
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div className="space-y-0.5">
                   <Label htmlFor="recurring">Recurring Job</Label>
@@ -164,7 +156,6 @@ export default function CreateJob() {
                 />
               </div>
 
-              {/* Interval (shown only for recurring jobs) */}
               {isRecurring && (
                 <div className="space-y-2">
                   <Label htmlFor="interval">Interval (seconds) *</Label>
@@ -188,7 +179,6 @@ export default function CreateJob() {
                 </div>
               )}
 
-              {/* Next Execution Time */}
               <div className="space-y-2">
                 <Label htmlFor="nextExecution">Next Execution Time (Optional)</Label>
                 <Input
@@ -207,7 +197,6 @@ export default function CreateJob() {
                 </p>
               </div>
 
-              {/* Max Retry */}
               <div className="space-y-2">
                 <Label htmlFor="maxRetry">Max Retry Attempts</Label>
                 <Input
@@ -224,7 +213,6 @@ export default function CreateJob() {
                 />
               </div>
 
-              {/* Max Execution Time */}
               <div className="space-y-2">
                 <Label htmlFor="maxExecutionTime">
                   Max Execution Time (seconds)
@@ -243,7 +231,6 @@ export default function CreateJob() {
                 />
               </div>
 
-              {/* Submit Button */}
               <div className="flex gap-4 pt-4">
                 <Button type="submit" size="lg" className="flex-1">
                   <Save className="h-5 w-5 mr-2" />

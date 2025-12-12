@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { authService } from "@/auth/authService"; // Import authService
+import { API_BASE_URL } from "@/config";
 
 export default function Executions() {
   const [executions, setExecutions] = useState<JobExecution[]>([]);
@@ -30,10 +31,10 @@ export default function Executions() {
 
   useEffect(() => {
     async function loadExecutions() {
-      // 1. Get Token
+      // 2. Get Token
       const token = authService.getToken();
 
-      // 2. Redirect if not authenticated
+      // 3. Redirect if not authenticated
       if (!token) {
         toast.error("Please login first");
         navigate("/login");
@@ -43,9 +44,9 @@ export default function Executions() {
       try {
         setLoading(true);
 
-        // 3. Add Headers to Fetch
+        // 4. Update Fetch URL to use dynamic API_BASE_URL
         const executionsRes = await fetch(
-          `http://localhost:8080/scheduler/executions/?limit=${limit}&offset=${page * limit}`,
+          `${API_BASE_URL}/scheduler/executions/?limit=${limit}&offset=${page * limit}`,
           {
             method: "GET",
             headers: {
@@ -55,7 +56,7 @@ export default function Executions() {
           }
         );
 
-        // 4. Handle 401 (Session Expired)
+        // 5. Handle 401 (Session Expired)
         if (executionsRes.status === 401) {
             authService.logout();
             navigate("/login");
@@ -90,7 +91,7 @@ export default function Executions() {
     }
 
     loadExecutions();
-  }, [page, limit, navigate]); // Added navigate to dependencies
+  }, [page, limit, navigate, API_BASE_URL]); // Added API_BASE_URL to dependencies
 
   // Client-side filtering (search & status)
   const filteredExecutions = executions.filter((execution) => {

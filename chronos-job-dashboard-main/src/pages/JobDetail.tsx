@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { Job } from "@/components/JobsTable";
 import { toast } from "sonner";
 import { authService } from "@/auth/authService"; // Import authService
+import { API_BASE_URL } from "@/config";
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -25,7 +26,7 @@ export default function JobDetail() {
     if (!id) return;
 
     async function fetchJobData() {
-      // 1. Get Token
+      // 2. Get Token
       const token = authService.getToken();
       if (!token) {
         toast.error("Please login first");
@@ -34,8 +35,8 @@ export default function JobDetail() {
       }
 
       try {
-        // 2. Fetch Job with Auth
-        const jobRes = await fetch(`http://localhost:8080/scheduler/jobs/${id}`, {
+        // 3. Fetch Job with Dynamic URL
+        const jobRes = await fetch(`${API_BASE_URL}/scheduler/jobs/${id}`, {
           headers: {
             "Authorization": token,
             "Content-Type": "application/json"
@@ -44,12 +45,12 @@ export default function JobDetail() {
 
         if (jobRes.status === 401) throw new Error("Unauthorized");
         if (!jobRes.ok) throw new Error("Failed to load job");
-        
+
         const jobData = await jobRes.json();
 
-        // 3. Fetch Executions with Auth
+        // 4. Fetch Executions with Dynamic URL
         const execRes = await fetch(
-          `http://localhost:8080/scheduler/jobs/${id}/executions?limit=20&offset=0`, {
+          `${API_BASE_URL}/scheduler/jobs/${id}/executions?limit=20&offset=0`, {
             headers: {
               "Authorization": token,
               "Content-Type": "application/json"
@@ -59,7 +60,7 @@ export default function JobDetail() {
 
         if (execRes.status === 401) throw new Error("Unauthorized");
         if (!execRes.ok) throw new Error("Failed to load executions");
-        
+
         const execData = await execRes.json();
 
         setJob(jobData);
@@ -78,14 +79,15 @@ export default function JobDetail() {
     }
 
     fetchJobData();
-  }, [id, navigate]);
+  }, [id, navigate, API_BASE_URL]);
 
   const handleDelete = async () => {
     const token = authService.getToken();
     if (!token) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/scheduler/jobs/${id}`, {
+      // 5. Delete Job with Dynamic URL
+      const res = await fetch(`${API_BASE_URL}/scheduler/jobs/${id}`, {
         method: "DELETE",
         headers: {
             "Authorization": token,
@@ -109,11 +111,12 @@ export default function JobDetail() {
 
   const handleTrigger = async () => {
     // Optional: If you have a trigger endpoint, secure it here too
-    // For now, keeping the mock behavior but checking auth
     if (!authService.isAuthenticated()) {
         navigate("/login");
         return;
     }
+    // You can add the actual trigger fetch call here later:
+    // fetch(`${API_BASE_URL}/scheduler/jobs/${id}/trigger`, ...)
     toast.success("Job triggered successfully");
   };
 
