@@ -10,6 +10,7 @@ import { ArrowLeft, Clock, Trash2, PlayCircle } from "lucide-react";
 import { format } from "date-fns";
 import { Job } from "@/components/JobsTable";
 import { toast } from "sonner";
+import { authService } from "@/auth/authService"; // Import authService
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -24,22 +25,51 @@ export default function JobDetail() {
     if (!id) return;
 
     async function fetchJobData() {
+      // 1. Get Token
+      const token = authService.getToken();
+      if (!token) {
+        toast.error("Please login first");
+        navigate("/login");
+        return;
+      }
+
       try {
-        // Fetch job
-        const jobRes = await fetch(`http://localhost:8080/jobs/${id}`);
+        // 2. Fetch Job with Auth
+        const jobRes = await fetch(`http://localhost:8080/scheduler/jobs/${id}`, {
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (jobRes.status === 401) throw new Error("Unauthorized");
         if (!jobRes.ok) throw new Error("Failed to load job");
+        
         const jobData = await jobRes.json();
 
-        // Fetch executions
+        // 3. Fetch Executions with Auth
         const execRes = await fetch(
-          `http://localhost:8080/jobs/${id}/executions?limit=20&offset=0`
+          `http://localhost:8080/scheduler/jobs/${id}/executions?limit=20&offset=0`, {
+            headers: {
+              "Authorization": token,
+              "Content-Type": "application/json"
+            }
+          }
         );
+
+        if (execRes.status === 401) throw new Error("Unauthorized");
         if (!execRes.ok) throw new Error("Failed to load executions");
+        
         const execData = await execRes.json();
 
         setJob(jobData);
         setExecutions(execData);
       } catch (err) {
+        if (err instanceof Error && err.message === "Unauthorized") {
+            authService.logout();
+            navigate("/login");
+            return;
+        }
         toast.error("Failed to load job details");
         console.error(err);
       } finally {
@@ -48,13 +78,27 @@ export default function JobDetail() {
     }
 
     fetchJobData();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleDelete = async () => {
+    const token = authService.getToken();
+    if (!token) return;
+
     try {
-      const res = await fetch(`http://localhost:8080/jobs/${id}`, {
+      const res = await fetch(`http://localhost:8080/scheduler/jobs/${id}`, {
         method: "DELETE",
+        headers: {
+            "Authorization": token,
+            "Content-Type": "application/json"
+        }
       });
+
+      if (res.status === 401) {
+          authService.logout();
+          navigate("/login");
+          return;
+      }
+
       if (!res.ok) throw new Error();
       toast.success("Job deleted successfully");
       navigate("/jobs");
@@ -63,11 +107,17 @@ export default function JobDetail() {
     }
   };
 
-  const handleTrigger = () => {
+  const handleTrigger = async () => {
+    // Optional: If you have a trigger endpoint, secure it here too
+    // For now, keeping the mock behavior but checking auth
+    if (!authService.isAuthenticated()) {
+        navigate("/login");
+        return;
+    }
     toast.success("Job triggered successfully");
   };
 
-  if (loading) return <Layout>Loading job…</Layout>;
+  if (loading) return <Layout>Loading job...</Layout>;
   if (!job) return <Layout>Job not found</Layout>;
 
   return (

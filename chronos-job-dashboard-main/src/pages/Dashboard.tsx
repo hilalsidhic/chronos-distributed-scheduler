@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Assuming you use react-router
 import { Layout } from "@/components/Layout";
 import { StatsCard } from "@/components/StatsCard";
 import { ExecutionsTable, JobExecution } from "@/components/ExecutionsTable";
@@ -16,42 +17,88 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Job } from "@/components/JobsTable";
+import { authService } from "@/auth/authService";
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [recentExecutions, setRecentExecutions] = useState<JobExecution[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Use navigation to redirect if not logged in
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadDashboard() {
+      // 1. Get Token from AuthService
+      const token = authService.getToken();
+
+      // 2. Redirect if not authenticated
+      if (!token) {
+        toast.error("Please login first");
+        navigate("/login");
+        return;
+      }
+
       try {
-        // Load all jobs
-        const jobsRes = await fetch("http://localhost:8080/jobs");
+        // 3. Add Token to Jobs Request
+        const jobsRes = await fetch("http://localhost:8080/scheduler/jobs", {
+          method: "GET",
+          headers: {
+            "Authorization": token, // Uses the stored Basic Auth string
+            "Content-Type": "application/json"
+          }
+        });
+
+        // Handle Session Expiry (401)
+        if (jobsRes.status === 401) {
+            authService.logout();
+            navigate("/login");
+            throw new Error("Session expired");
+        }
+
         if (!jobsRes.ok) throw new Error("Failed to load jobs");
+        
         const jobsData: Job[] = await jobsRes.json();
         setJobs(jobsData);
 
-        // Load execution stats (fast, lightweight)
-        const statsRes = await fetch("http://localhost:8080/executions/stats");
+        // 4. Add Token to Stats Request
+        const statsRes = await fetch("http://localhost:8080/scheduler/executions/stats", {
+          method: "GET",
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (statsRes.status === 401) {
+            authService.logout();
+            navigate("/login");
+            throw new Error("Session expired");
+        }
+
         if (!statsRes.ok) throw new Error("Failed to load execution stats");
+        
         const statsData = await statsRes.json();
 
         setStats(statsData);
         setRecentExecutions(statsData.recentExecutions || []);
 
       } catch (err) {
-        toast.error("Failed to load dashboard data");
-        console.error(err);
+        // Don't show toast if we already redirected for 401
+        if (err instanceof Error && err.message !== "Session expired") {
+            toast.error("Failed to load dashboard data");
+            console.error(err);
+        }
       } finally {
         setLoading(false);
       }
     }
 
     loadDashboard();
-  }, []);
+  }, [navigate]);
 
-  if (loading || !stats) return <Layout>Loading dashboard…</Layout>;
+  if (loading || !stats) return <Layout>Loading dashboard...</Layout>;
 
   // --- Stats ---
   const totalJobs = jobs.length;
@@ -66,10 +113,10 @@ export default function Dashboard() {
   // --- Chart Data from recent executions (last 7 days only) ---
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const chartData = Array.from({ length: 7 }, (_, i) => ({
-  name: days[(new Date().getDay() - i + 7) % 7],
-  successful: stats.totalSuccess > 0 ? Math.floor(stats.totalSuccess / 7) : 0,
-  failed: stats.totalFailed > 0 ? Math.floor(stats.totalFailed / 7) : 0,
-})).reverse();
+    name: days[(new Date().getDay() - i + 7) % 7],
+    successful: stats.totalSuccess > 0 ? Math.floor(stats.totalSuccess / 7) : 0,
+    failed: stats.totalFailed > 0 ? Math.floor(stats.totalFailed / 7) : 0,
+  })).reverse();
 
 
   return (

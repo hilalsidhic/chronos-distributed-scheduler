@@ -31,5 +31,7 @@ public class JobRequestDto {
 
     @Min(value = 1, message = "Max execution time must be >= 1")
     private int maxExecutionTime;
+
+    private String createdBy;
     private OffsetDateTime nextExecutionTime;
 }

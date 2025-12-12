@@ -48,6 +48,7 @@ public interface JobExecutionRepository extends JpaRepository<JobExecution, Long
             FROM job_execution 
             WHERE status = 'SUCCESS'
             AND is_preserved = FALSE
+            ORDER BY finished_at DESC
             FOR UPDATE SKIP LOCKED 
             LIMIT :limit
             """,

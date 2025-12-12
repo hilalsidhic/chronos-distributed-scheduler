@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { JobsTable, Job } from "@/components/JobsTable";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-
+import { authService } from "@/auth/authService"; // Import authService
 
 export default function Jobs() {
   const navigate = useNavigate();
@@ -23,29 +23,72 @@ export default function Jobs() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8080/jobs")
+    // 1. Get Token
+    const token = authService.getToken();
+
+    // 2. Redirect if not authenticated
+    if (!token) {
+        toast.error("Please login first");
+        navigate("/login");
+        return;
+    }
+
+    // 3. Fetch with Headers
+    fetch("http://localhost:8080/scheduler/jobs", {
+        headers: {
+            "Authorization": token,
+            "Content-Type": "application/json"
+        }
+    })
       .then((res) => {
+        if (res.status === 401) {
+            authService.logout();
+            navigate("/login");
+            throw new Error("Session expired");
+        }
         if (!res.ok) throw new Error("Failed to fetch jobs");
         return res.json();
       })
       .then((data) => setJobs(data))
       .catch((err) => {
-        toast.error("Error loading jobs");
-        console.error(err);
+        if (err.message !== "Session expired") {
+            toast.error("Error loading jobs");
+            console.error(err);
+        }
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [navigate]);
 
   const handleDelete = (id: number) => {
-    fetch(`http://localhost:8080/jobs/${id}`, {
+    const token = authService.getToken();
+    if (!token) {
+        navigate("/login");
+        return;
+    }
+
+    fetch(`http://localhost:8080/scheduler/jobs/${id}`, {
       method: "DELETE",
+      headers: {
+        "Authorization": token,
+        "Content-Type": "application/json"
+      }
     })
       .then((res) => {
+        if (res.status === 401) {
+            authService.logout();
+            navigate("/login");
+            throw new Error("Session expired");
+        }
         if (!res.ok) throw new Error("Delete failed");
+        
         setJobs((prev) => prev.filter((job) => job.id !== id));
         toast.success("Job deleted successfully");
       })
-      .catch(() => toast.error("Failed to delete job"));
+      .catch((err) => {
+          if (err.message !== "Session expired") {
+            toast.error("Failed to delete job");
+          }
+      });
   };
 
   const filteredJobs = jobs.filter((job) => {

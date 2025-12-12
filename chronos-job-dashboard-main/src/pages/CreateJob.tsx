@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ArrowLeft, Save } from "lucide-react";
+import { authService } from "@/auth/authService"; // Import authService
 
 export default function CreateJob() {
   const navigate = useNavigate();
@@ -23,46 +24,66 @@ export default function CreateJob() {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    // Validate JSON payload
-    const parsedPayload = JSON.parse(formData.payload);
-
-    const requestBody = {
-      name: formData.name,
-      payload: parsedPayload,
-      intervalSeconds: isRecurring ? formData.intervalSeconds : 0,
-      maxRetry: formData.maxRetry,
-      maxExecutionTime: formData.maxExecutionTime,
-      nextExecutionTime: formData.nextExecutionTime || null,
-    };
-
-    const endpoint = isRecurring
-      ? "http://localhost:8080/jobs/recurring"
-      : "http://localhost:8080/jobs";
-
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!res.ok) throw new Error("Failed to create job");
-
-    toast.success("Job created successfully");
-    navigate("/jobs");
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      toast.error("Invalid JSON payload");
-    } else {
-      toast.error("Failed to create job");
+    // 1. Get Token
+    const token = authService.getToken();
+    if (!token) {
+      toast.error("Please login first");
+      navigate("/login");
+      return;
     }
-    console.error(error);
-  }
-};
+
+    try {
+      // Validate JSON payload
+      const parsedPayload = JSON.parse(formData.payload);
+      const currentUser = authService.getCurrentUser();
+      const createdBy = currentUser ? currentUser.email : "system";
+
+      const requestBody = {
+        name: formData.name,
+        payload: parsedPayload,
+        intervalSeconds: isRecurring ? formData.intervalSeconds : 0,
+        maxRetry: formData.maxRetry,
+        maxExecutionTime: formData.maxExecutionTime,
+        createdBy: createdBy,
+        nextExecutionTime: formData.nextExecutionTime || null,
+      };
+
+      const endpoint = isRecurring
+        ? "http://localhost:8080/scheduler/jobs/recurring"
+        : "http://localhost:8080/scheduler/jobs";
+
+      // 2. Send Request with Headers
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token, // <--- Add Token Here
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      // 3. Handle Session Expiry
+      if (res.status === 401) {
+          authService.logout();
+          navigate("/login");
+          throw new Error("Session expired");
+      }
+
+      if (!res.ok) throw new Error("Failed to create job");
+
+      toast.success("Job created successfully");
+      navigate("/jobs");
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        toast.error("Invalid JSON payload");
+      } else if (error instanceof Error && error.message !== "Session expired") {
+        toast.error("Failed to create job");
+      }
+      console.error(error);
+    }
+  };
 
 
   return (
