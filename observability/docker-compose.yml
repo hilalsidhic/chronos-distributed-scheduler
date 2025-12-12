@@ -10,6 +10,8 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     restart: unless-stopped
+    networks:
+      - chronos-net
 
   grafana:
     image: grafana/grafana:latest
@@ -21,7 +23,10 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     restart: unless-stopped
+    networks:
+      - chronos-net
 
 volumes:
   prometheus_data:
   grafana_data:
+

@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Database
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: chronos_postgres
+    environment:
+      POSTGRES_USER: chronos
+      POSTGRES_PASSWORD: chronos123
+      POSTGRES_DB: chronos_db
+      TZ: Asia/Kolkata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - chronos-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chronos -d chronos_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # 2. API Gateway
+  # ---------------------------------------------------------------------------
+  gateway:
+    build:
+      context: ./Chronos_Gateway
+      dockerfile: Dockerfile
+    container_name: chronos-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:5432/chronos_db
+      SPRING_R2DBC_USERNAME: chronos
+      SPRING_R2DBC_PASSWORD: chronos123
+      SCHEDULER_URI: http://scheduler:8081
+      WORKER_URI: http://worker:8083
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - chronos-net
+
+  # ---------------------------------------------------------------------------
+  # 3. Scheduler Service
+  # ---------------------------------------------------------------------------
+  scheduler:
+    build:
+      context: ./Chronos_Scheduler
+      dockerfile: Dockerfile
+    container_name: chronos-scheduler
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/chronos_db
+      SPRING_DATASOURCE_USERNAME: chronos
+      SPRING_DATASOURCE_PASSWORD: chronos123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - chronos-net
+
+  # ---------------------------------------------------------------------------
+  # 4. Worker Service
+  # ---------------------------------------------------------------------------
+  worker:
+    build:
+      context: ./Chronos_Worker
+      dockerfile: Dockerfile
+    container_name: chronos-worker
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/chronos_db
+      SPRING_DATASOURCE_USERNAME: chronos
+      SPRING_DATASOURCE_PASSWORD: chronos123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - chronos-net
+
+  # ---------------------------------------------------------------------------
+  # 5. Monitoring (Prometheus & Grafana)
+  # ---------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+    networks:
+      - chronos-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - chronos-net
+
+# ---------------------------------------------------------------------------
+# Volumes & Networks
+# ---------------------------------------------------------------------------
+volumes:
+  pgdata:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  chronos-net:
+    driver: bridge

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Layout } from "@/components/Layout";
 import { ExecutionsTable, JobExecution } from "@/components/ExecutionsTable";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { authService } from "@/auth/authService"; // Import authService
 
 export default function Executions() {
   const [executions, setExecutions] = useState<JobExecution[]>([]);
@@ -24,14 +26,41 @@ export default function Executions() {
   const [hasNext, setHasNext] = useState(false);
   const [total, setTotal] = useState(0);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function loadExecutions() {
+      // 1. Get Token
+      const token = authService.getToken();
+
+      // 2. Redirect if not authenticated
+      if (!token) {
+        toast.error("Please login first");
+        navigate("/login");
+        return;
+      }
+
       try {
         setLoading(true);
 
+        // 3. Add Headers to Fetch
         const executionsRes = await fetch(
-          `http://localhost:8080/executions/?limit=${limit}&offset=${page * limit}`
+          `http://localhost:8080/scheduler/executions/?limit=${limit}&offset=${page * limit}`,
+          {
+            method: "GET",
+            headers: {
+              "Authorization": token,
+              "Content-Type": "application/json"
+            }
+          }
         );
+
+        // 4. Handle 401 (Session Expired)
+        if (executionsRes.status === 401) {
+            authService.logout();
+            navigate("/login");
+            throw new Error("Session expired");
+        }
 
         if (!executionsRes.ok) throw new Error("Failed to load executions");
 
@@ -50,15 +79,18 @@ export default function Executions() {
         }
 
       } catch (err) {
-        toast.error("Failed to load execution history");
-        console.error(err);
+        // Only show error toast if it wasn't a redirect
+        if (err instanceof Error && err.message !== "Session expired") {
+            toast.error("Failed to load execution history");
+            console.error(err);
+        }
       } finally {
         setLoading(false);
       }
     }
 
     loadExecutions();
-  }, [page, limit]); // Reload when page or limit changes
+  }, [page, limit, navigate]); // Added navigate to dependencies
 
   // Client-side filtering (search & status)
   const filteredExecutions = executions.filter((execution) => {
@@ -72,7 +104,7 @@ export default function Executions() {
     return matchesSearch && matchesStatus;
   });
 
-  if (loading) return <Layout>Loading executions…</Layout>;
+  if (loading) return <Layout>Loading executions...</Layout>;
 
   return (
     <Layout>
