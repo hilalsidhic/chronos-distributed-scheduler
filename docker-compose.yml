@@ -94,7 +94,7 @@ services:
   # ---------------------------------------------------------------------------
   frontend:
     build:
-      context: ./Chronos_Frontend
+      context: ./chronos-job-dashboard-main
       dockerfile: Dockerfile
       args:
         # INJECT YOUR DIGITALOCEAN IP HERE
