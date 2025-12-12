@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/config"; // Import the constant
 // Define interfaces
 export interface User {
   id: string; // or number, depending on your DB
@@ -12,8 +13,6 @@ export interface AuthResponse {
 
 const STORAGE_KEY = "auth_user";
 const TOKEN_KEY = "auth_token"; // We store the "Basic ..." string here
-
-const API_URL = "http://localhost:8080";
 
 export const authService = {
   // 1. LOGIN

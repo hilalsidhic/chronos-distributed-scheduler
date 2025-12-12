@@ -7,12 +7,10 @@ spring:
 
   cloud:
     gateway:
-      # NEW STRUCTURE for 2025.0.0+ to fix "must not be empty" & warnings
       server:
         webflux:
           routes:
             - id: scheduler
-              # Use placeholder: Defaults to localhost, overridden in Docker
               uri: ${SCHEDULER_URI:http://localhost:8081}
               predicates:
                 - Path=/scheduler/**
@@ -26,14 +24,17 @@ spring:
               filters:
                 - StripPrefix=1
 
-          globalcors:
-            add-to-simple-url-handler-mapping: true
-            cors-configurations:
-              "[/**]":
-                allowed-origins: "http://localhost:8085"
-                allowed-headers: "*"
-                allowed-methods: "*"
-                allow-credentials: true
+      # CORS Configuration
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          "[/**]":
+            # UPDATED: Reads env var 'FRONTEND_URI'.
+            # If missing (local dev), defaults to http://localhost:8085
+            allowed-origins: "${FRONTEND_URI:http://localhost:8085}"
+            allowed-headers: "*"
+            allowed-methods: "*"
+            allow-credentials: true
 
 logging:
   level:

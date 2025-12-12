@@ -41,6 +41,8 @@ services:
       SPRING_R2DBC_PASSWORD: chronos123
       SCHEDULER_URI: http://scheduler:8081
       WORKER_URI: http://worker:8083
+      # Allow your deployed Frontend to talk to the Gateway (CORS)
+      FRONTEND_URI: "http://159.65.158.1"
     depends_on:
       postgres:
         condition: service_healthy
@@ -88,7 +90,24 @@ services:
       - chronos-net
 
   # ---------------------------------------------------------------------------
-  # 5. Monitoring (Prometheus & Grafana)
+  # 5. Frontend (React + Nginx)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./Chronos_Frontend
+      dockerfile: Dockerfile
+      args:
+        # INJECT YOUR DIGITALOCEAN IP HERE
+        # This tells the React build where the backend lives
+        - VITE_API_URL=http://159.65.158.1:8080
+    container_name: chronos-frontend
+    ports:
+      - "80:80" # Serve on standard HTTP port
+    networks:
+      - chronos-net
+
+  # ---------------------------------------------------------------------------
+  # 6. Monitoring (Prometheus & Grafana)
   # ---------------------------------------------------------------------------
   prometheus:
     image: prom/prometheus:latest

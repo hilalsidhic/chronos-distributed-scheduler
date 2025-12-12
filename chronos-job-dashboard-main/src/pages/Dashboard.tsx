@@ -18,13 +18,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Job } from "@/components/JobsTable";
 import { authService } from "@/auth/authService";
+import { API_BASE_URL } from "@/config";
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [recentExecutions, setRecentExecutions] = useState<JobExecution[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Use navigation to redirect if not logged in
   const navigate = useNavigate();
 
@@ -41,8 +42,8 @@ export default function Dashboard() {
       }
 
       try {
-        // 3. Add Token to Jobs Request
-        const jobsRes = await fetch("http://localhost:8080/scheduler/jobs", {
+        // 3. Add Token to Jobs Request (UPDATED URL)
+        const jobsRes = await fetch(`${API_BASE_URL}/scheduler/jobs`, {
           method: "GET",
           headers: {
             "Authorization": token, // Uses the stored Basic Auth string
@@ -58,12 +59,12 @@ export default function Dashboard() {
         }
 
         if (!jobsRes.ok) throw new Error("Failed to load jobs");
-        
+
         const jobsData: Job[] = await jobsRes.json();
         setJobs(jobsData);
 
-        // 4. Add Token to Stats Request
-        const statsRes = await fetch("http://localhost:8080/scheduler/executions/stats", {
+        // 4. Add Token to Stats Request (UPDATED URL)
+        const statsRes = await fetch(`${API_BASE_URL}/scheduler/executions/stats`, {
           method: "GET",
           headers: {
             "Authorization": token,
@@ -78,7 +79,7 @@ export default function Dashboard() {
         }
 
         if (!statsRes.ok) throw new Error("Failed to load execution stats");
-        
+
         const statsData = await statsRes.json();
 
         setStats(statsData);
@@ -96,7 +97,7 @@ export default function Dashboard() {
     }
 
     loadDashboard();
-  }, [navigate]);
+  }, [navigate, API_BASE_URL]); // Added API_BASE_URL to dependency array
 
   if (loading || !stats) return <Layout>Loading dashboard...</Layout>;
 
