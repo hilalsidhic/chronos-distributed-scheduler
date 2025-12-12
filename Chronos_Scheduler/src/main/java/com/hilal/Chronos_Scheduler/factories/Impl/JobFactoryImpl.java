@@ -31,7 +31,7 @@ public class JobFactoryImpl implements JobFactory {
                 .isRecurring(recurring)
                 .retryCount(0)
                 .isEnabled(true)
-                .createdBy("dummyUser") // In real scenarios, fetch from authenticated user context
+                .createdBy(jobRequestDto.getCreatedBy())
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())
                 .build();

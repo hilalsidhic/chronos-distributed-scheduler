@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  # 1. Prometheus itself
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # 2. API Gateway (The Entry Point)
+  - job_name: "chronos-gateway"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["gateway:8080"]
+
+  # 3. Scheduler Service
+  - job_name: "chronos-scheduler"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["scheduler:8082"]
+
+  # 4. Worker Service
+  - job_name: "chronos-worker"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["worker:8084"]
