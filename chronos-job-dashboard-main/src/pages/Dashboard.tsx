@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Assuming you use react-router
+import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { StatsCard } from "@/components/StatsCard";
 import { ExecutionsTable, JobExecution } from "@/components/ExecutionsTable";
-import { Clock, CheckCircle2, XCircle, Activity } from "lucide-react";
+import { Clock, CheckCircle2, XCircle, Activity, AlertTriangle, Loader2 } from "lucide-react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
   Tooltip,
   ResponsiveContainer,
   Legend,
@@ -25,16 +23,11 @@ export default function Dashboard() {
   const [recentExecutions, setRecentExecutions] = useState<JobExecution[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  // Use navigation to redirect if not logged in
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadDashboard() {
-      // 1. Get Token from AuthService
       const token = authService.getToken();
-
-      // 2. Redirect if not authenticated
       if (!token) {
         toast.error("Please login first");
         navigate("/login");
@@ -42,54 +35,32 @@ export default function Dashboard() {
       }
 
       try {
-        // 3. Add Token to Jobs Request (UPDATED URL)
+        // 1. Fetch Jobs
         const jobsRes = await fetch(`${API_BASE_URL}/scheduler/jobs`, {
-          method: "GET",
-          headers: {
-            "Authorization": token, // Uses the stored Basic Auth string
-            "Content-Type": "application/json"
-          }
+          headers: { "Authorization": token, "Content-Type": "application/json" }
         });
-
-        // Handle Session Expiry (401)
-        if (jobsRes.status === 401) {
-            authService.logout();
-            navigate("/login");
-            throw new Error("Session expired");
-        }
-
-        if (!jobsRes.ok) throw new Error("Failed to load jobs");
-
-        const jobsData: Job[] = await jobsRes.json();
+        if (jobsRes.status === 401) throw new Error("Session expired");
+        const jobsData = await jobsRes.json();
         setJobs(jobsData);
 
-        // 4. Add Token to Stats Request (UPDATED URL)
+        // 2. Fetch Stats
         const statsRes = await fetch(`${API_BASE_URL}/scheduler/executions/stats`, {
-          method: "GET",
-          headers: {
-            "Authorization": token,
-            "Content-Type": "application/json"
-          }
+          headers: { "Authorization": token, "Content-Type": "application/json" }
         });
-
-        if (statsRes.status === 401) {
-            authService.logout();
-            navigate("/login");
-            throw new Error("Session expired");
-        }
-
-        if (!statsRes.ok) throw new Error("Failed to load execution stats");
-
+        if (statsRes.status === 401) throw new Error("Session expired");
         const statsData = await statsRes.json();
-
+        
         setStats(statsData);
         setRecentExecutions(statsData.recentExecutions || []);
 
       } catch (err) {
-        // Don't show toast if we already redirected for 401
-        if (err instanceof Error && err.message !== "Session expired") {
-            toast.error("Failed to load dashboard data");
-            console.error(err);
+        if (err instanceof Error) {
+            if(err.message === "Session expired") {
+                authService.logout();
+                navigate("/login");
+            } else {
+                toast.error("Failed to load dashboard data");
+            }
         }
       } finally {
         setLoading(false);
@@ -97,101 +68,128 @@ export default function Dashboard() {
     }
 
     loadDashboard();
-  }, [navigate, API_BASE_URL]); // Added API_BASE_URL to dependency array
+  }, [navigate]);
 
-  if (loading || !stats) return <Layout>Loading dashboard...</Layout>;
+  if (loading || !stats) {
+    return (
+        <Layout>
+            <div className="h-[50vh] flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+        </Layout>
+    );
+  }
 
-  // --- Stats ---
+  // --- Process Data ---
   const totalJobs = jobs.length;
-  const runningJobs = jobs.filter((j) => j.status === "RUNNING").length;
+  // Count active jobs based on 'isRecurring' or actual running status if you prefer
+  const activeSchedules = jobs.filter((j) => j.isRecurring).length; 
 
   const totalSuccess = stats.totalSuccess ?? 0;
   const totalFailed = stats.totalFailed ?? 0;
-  const totalRunning = stats.totalRunning ?? 0;
   const totalTimedOut = stats.totalTimedOut ?? 0;
-  const totalStuck = stats.totalStuck ?? 0;
+  const totalRunning = stats.totalRunning ?? 0; // Currently executing instances
 
-  // --- Chart Data from recent executions (last 7 days only) ---
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const chartData = Array.from({ length: 7 }, (_, i) => ({
-    name: days[(new Date().getDay() - i + 7) % 7],
-    successful: stats.totalSuccess > 0 ? Math.floor(stats.totalSuccess / 7) : 0,
-    failed: stats.totalFailed > 0 ? Math.floor(stats.totalFailed / 7) : 0,
-  })).reverse();
-
+  // Prepare Pie Chart Data
+  const pieData = [
+    { name: "Success", value: totalSuccess, color: "hsl(var(--success))" }, // Use CSS variable or hex #22c55e
+    { name: "Failed", value: totalFailed, color: "hsl(var(--destructive))" }, // #ef4444
+    { name: "Timed Out", value: totalTimedOut, color: "#f59e0b" }, // Amber
+    { name: "Running", value: totalRunning, color: "#3b82f6" },   // Blue
+  ].filter(item => item.value > 0); // Hide empty slices
 
   return (
     <Layout>
       <div className="space-y-8 animate-in fade-in duration-500">
-        {/* Header */}
         <div>
           <h1 className="text-4xl font-bold font-heading text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-2">
-            Monitor your distributed job scheduler at a glance
+            System health and execution summary
           </p>
         </div>
 
-        {/* Stats Grid */}
+        {/* 1. Stats Grid - Expanded to 4 columns */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
-            title="Total Jobs"
+            title="Total Schedules"
             value={totalJobs}
             icon={Clock}
-            trend={`${totalJobs} total jobs`}
+            trend={`${activeSchedules} recurring`}
           />
           <StatsCard
-            title="Running Jobs"
-            value={runningJobs}
-            icon={Activity}
-            trend="Currently active"
-          />
-
-          <StatsCard
-            title="Successful Executions"
-            value={totalSuccess}
+            title="Success Rate"
+            value={`${totalSuccess}`}
             icon={CheckCircle2}
-            trend={`${totalSuccess} successful`}
+            trend="Completed executions"
           />
           <StatsCard
-            title="Failed Executions"
+            title="Failures"
             value={totalFailed}
             icon={XCircle}
-            trend={`${totalFailed} failed`}
+            trend="Needs attention"
+          />
+           <StatsCard
+            title="Timed Out"
+            value={totalTimedOut}
+            icon={AlertTriangle}
+            trend="Exceeded limit"
           />
         </div>
 
-        {/* Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-heading">Execution History (Last 7 days)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "0.75rem",
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="successful" fill="hsl(var(--success))" name="Successful" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="failed" fill="hsl(var(--destructive))" name="Failed" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        {/* 2. Visualization Row */}
+        <div className="grid gap-6 md:grid-cols-7">
+            {/* Chart takes up 3 columns */}
+            <Card className="md:col-span-3">
+                <CardHeader>
+                    <CardTitle className="font-heading">Execution Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="h-[300px] w-full">
+                        {pieData.length > 0 ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={pieData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={80}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                    >
+                                        {pieData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip 
+                                        contentStyle={{ 
+                                            backgroundColor: "hsl(var(--card))", 
+                                            borderRadius: "8px", 
+                                            border: "1px solid hsl(var(--border))" 
+                                        }}
+                                        itemStyle={{ color: "hsl(var(--foreground))" }}
+                                    />
+                                    <Legend verticalAlign="bottom" height={36}/>
+                                </PieChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="h-full flex items-center justify-center text-muted-foreground">
+                                No execution data available yet.
+                            </div>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
 
-        {/* Recent Executions */}
-        <div>
-          <h2 className="text-2xl font-bold font-heading text-foreground mb-4">
-            Recent Executions
-          </h2>
-          <ExecutionsTable executions={recentExecutions} />
+            {/* Recent Table takes up 4 columns */}
+            <div className="md:col-span-4 space-y-4">
+                <h2 className="text-2xl font-bold font-heading text-foreground">
+                    Recent Activity
+                </h2>
+                {/* We wrap the table in a card effect by using the existing component container if needed, 
+                    or just render it directly if ExecutionsTable has its own card style */}
+                <ExecutionsTable executions={recentExecutions.slice(0, 5)} /> 
+            </div>
         </div>
       </div>
     </Layout>

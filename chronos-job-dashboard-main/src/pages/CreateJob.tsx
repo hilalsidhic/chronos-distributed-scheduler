@@ -39,6 +39,11 @@ export default function CreateJob() {
       const currentUser = authService.getCurrentUser();
       const createdBy = currentUser ? currentUser.email : "system";
 
+      let formattedTime = null;
+      if (formData.nextExecutionTime) {
+          formattedTime = new Date(formData.nextExecutionTime).toISOString();
+      }
+
       const requestBody = {
         name: formData.name,
         payload: parsedPayload,
@@ -46,7 +51,7 @@ export default function CreateJob() {
         maxRetry: formData.maxRetry,
         maxExecutionTime: formData.maxExecutionTime,
         createdBy: createdBy,
-        nextExecutionTime: formData.nextExecutionTime || null,
+        nextExecutionTime: formattedTime,
       };
 
       // 2. Updated Endpoint Construction
