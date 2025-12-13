@@ -1,8 +1,9 @@
 import { API_BASE_URL } from "@/config"; // Import the constant
+
 // Define interfaces
 export interface User {
-  id: string; // or number, depending on your DB
-  email: string; // We will map 'username' to email in the frontend context
+  id: string; 
+  email: string; 
   name: string;
 }
 
@@ -12,18 +13,16 @@ export interface AuthResponse {
 }
 
 const STORAGE_KEY = "auth_user";
-const TOKEN_KEY = "auth_token"; // We store the "Basic ..." string here
+const TOKEN_KEY = "auth_token"; 
 
 export const authService = {
   // 1. LOGIN
-  // Since we use Basic Auth, we "login" by trying to fetch a protected resource.
   async login(email: string, password: string): Promise<AuthResponse> {
     const credentials = btoa(`${email}:${password}`);
     const token = `Basic ${credentials}`;
 
-    // Test the credentials by hitting a protected endpoint (e.g., /scheduler/jobs)
-    // We use limit=1 to keep the payload light
-    const response = await fetch(`${API_URL}/scheduler/jobs?limit=1`, {
+    // Used API_BASE_URL here (Correct)
+    const response = await fetch(`${API_BASE_URL}/scheduler/jobs?limit=1`, {
       method: "GET",
       headers: {
         Authorization: token,
@@ -35,12 +34,10 @@ export const authService = {
       throw new Error("Login failed");
     }
 
-    // If successful, construct the user object
-    // (In Basic Auth, the server doesn't send the user back on GET, so we use the input)
     const user: User = {
-      id: "0", // Placeholder since we don't have the ID yet
+      id: "0", 
       email: email,
-      name: email.split("@")[0], // Fallback name
+      name: email.split("@")[0], 
     };
 
     this.setSession(user, token);
@@ -49,13 +46,14 @@ export const authService = {
 
   // 2. SIGNUP
   async signup(email: string, password: string, name: string): Promise<AuthResponse> {
-    const response = await fetch(`${API_URL}/auth/signup`, {
+    // FIXED: Changed API_URL to API_BASE_URL here
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: email, // Map email to backend 'username'
+        username: email, 
         password: password,
         name: name,
       }),
@@ -66,11 +64,9 @@ export const authService = {
       throw new Error(errorText || "Signup failed");
     }
 
-    // If signup is successful, we automatically log them in
     const credentials = btoa(`${email}:${password}`);
     const token = `Basic ${credentials}`;
     
-    // The backend returns the created user
     const createdUser = await response.json();
     
     const user: User = {
@@ -88,7 +84,6 @@ export const authService = {
     localStorage.removeItem(TOKEN_KEY);
   },
 
-  // Helper to save session
   setSession(user: User, token: string) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
     localStorage.setItem(TOKEN_KEY, token);
