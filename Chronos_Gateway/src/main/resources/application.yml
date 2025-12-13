@@ -45,3 +45,6 @@ management:
     web:
       exposure:
         include: "*"
+
+frontend:
+  uri: ${FRONTEND_URI:http://localhost:8085}
