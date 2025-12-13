@@ -8,7 +8,6 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:8085")
 public class AuthController {
 
     private final UserRepository userRepository;
