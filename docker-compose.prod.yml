@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # ------------------------------------------------------
+  # 1. FRONTEND (Only exists in Cloud!)
+  # ------------------------------------------------------
+  frontend:
+    build:
+      context: ./chronos-job-dashboard-main
+      dockerfile: Dockerfile
+      args:
+        # Your DigitalOcean IP
+        - VITE_API_URL=http://159.65.158.1:8080
+    container_name: chronos-frontend
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - chronos-net
+
+  # ------------------------------------------------------
+  # 2. GATEWAY (Expose API to internet)
+  # ------------------------------------------------------
+  gateway:
+    ports:
+      - "8080:8080"
+    environment:
+      # Allow the deployed Frontend IP to talk to Gateway
+      FRONTEND_URI: "http://159.65.158.1"
+    restart: always
+
+  # ------------------------------------------------------
+  # 3. INTERNAL SERVICES (Secure them)
+  # ------------------------------------------------------
+  postgres:
+    restart: always
+    # No ports exposed! Accessible only by other containers.
+
+  scheduler:
+    restart: always
+    # No ports exposed!
+
+  worker:
+    restart: always
+    # No ports exposed!
+
+  prometheus:
+    restart: always
+    # No ports exposed! (View via Grafana or SSH tunnel if needed)
+
+  grafana:
+    ports:
+      - "3000:3000" # Keep exposed if you want to view dashboards publicly
+    restart: always

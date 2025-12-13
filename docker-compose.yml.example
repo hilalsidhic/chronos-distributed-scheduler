@@ -12,6 +12,8 @@ services:
       POSTGRES_PASSWORD: chronos123
       POSTGRES_DB: chronos_db
       TZ: Asia/Kolkata
+    ports:
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -31,12 +33,16 @@ services:
       context: ./Chronos_Gateway
       dockerfile: Dockerfile
     container_name: chronos-gateway
+    ports:
+      - "8080:8080"
     environment:
       SPRING_R2DBC_URL: r2dbc:postgresql://postgres:5432/chronos_db
       SPRING_R2DBC_USERNAME: chronos
       SPRING_R2DBC_PASSWORD: chronos123
       SCHEDULER_URI: http://scheduler:8081
       WORKER_URI: http://worker:8083
+      # Allow your deployed Frontend to talk to the Gateway (CORS)
+      FRONTEND_URI: "http://159.65.158.1"
     depends_on:
       postgres:
         condition: service_healthy
@@ -51,6 +57,8 @@ services:
       context: ./Chronos_Scheduler
       dockerfile: Dockerfile
     container_name: chronos-scheduler
+    ports:
+      - "8081:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/chronos_db
       SPRING_DATASOURCE_USERNAME: chronos
@@ -69,6 +77,8 @@ services:
       context: ./Chronos_Worker
       dockerfile: Dockerfile
     container_name: chronos-worker
+    ports:
+      - "8083:8083"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/chronos_db
       SPRING_DATASOURCE_USERNAME: chronos
@@ -80,31 +90,57 @@ services:
       - chronos-net
 
   # ---------------------------------------------------------------------------
-  # 5. Monitoring
+  # 5. Frontend (React + Nginx)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./chronos-job-dashboard-main
+      dockerfile: Dockerfile
+      args:
+        # INJECT YOUR DIGITALOCEAN IP HERE
+        # This tells the React build where the backend lives
+        - VITE_API_URL=http://159.65.158.1:8080
+    container_name: chronos-frontend
+    ports:
+      - "80:80" # Serve on standard HTTP port
+    networks:
+      - chronos-net
+
+  # ---------------------------------------------------------------------------
+  # 6. Monitoring (Prometheus & Grafana)
   # ---------------------------------------------------------------------------
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
+    ports:
+      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
+    restart: unless-stopped
     networks:
       - chronos-net
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    ports:
+      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    restart: unless-stopped
     networks:
       - chronos-net
     depends_on:
       - prometheus
 
+# ---------------------------------------------------------------------------
+# Volumes & Networks
+# ---------------------------------------------------------------------------
 volumes:
   pgdata:
   prometheus_data:

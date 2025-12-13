@@ -1,0 +1,1546 @@
+[
+  {
+    "name": "Auto_Job_001_POST",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "method": "POST",
+      "timeoutMs": 4557,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {
+        "title": "foo",
+        "body": "bar",
+        "userId": 388
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_002_GET",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://api.agify.io?name=user60",
+      "method": "GET",
+      "timeoutMs": 7339,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_003_GET",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 7168,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_004_GET",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 2665,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_005_POST",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 7524,
+      "headers": {},
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_006_DELETE",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://reqres.in/api/users/32",
+      "method": "DELETE",
+      "timeoutMs": 7531,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_007_GET",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://httpbin.org/status/500",
+      "method": "GET",
+      "timeoutMs": 6615,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_008_GET",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/93",
+      "method": "GET",
+      "timeoutMs": 9962,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_009_GET",
+    "isRecurring": false,
+    "intervalSeconds": 30,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://dummyjson.com/products/88",
+      "method": "GET",
+      "timeoutMs": 7412,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_010_GET",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 2394,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_011_GET",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/products/70",
+      "method": "GET",
+      "timeoutMs": 2674,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_012_GET",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 2763,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_013_POST",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 6233,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_014_GET",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 2093,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_015_POST",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 4871,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_016_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://api.agify.io?name=user38",
+      "method": "GET",
+      "timeoutMs": 5355,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_017_GET",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 2443,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_018_GET",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 9155,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_019_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 3136,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_020_DELETE",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://reqres.in/api/users/5",
+      "method": "DELETE",
+      "timeoutMs": 3825,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_021_GET",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 7971,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_022_GET",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 7980,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_023_POST",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "method": "POST",
+      "timeoutMs": 7476,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {
+        "title": "foo",
+        "body": "bar",
+        "userId": 470
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_024_POST",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://dummyjson.com/auth/login",
+      "method": "POST",
+      "timeoutMs": 6170,
+      "headers": {},
+      "body": {
+        "username": "kminchelle",
+        "password": "0lelplR"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_025_POST",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/auth/login",
+      "method": "POST",
+      "timeoutMs": 6835,
+      "headers": {},
+      "body": {
+        "username": "kminchelle",
+        "password": "0lelplR"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_026_GET",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://api.agify.io?name=user31",
+      "method": "GET",
+      "timeoutMs": 6595,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_027_GET",
+    "isRecurring": true,
+    "intervalSeconds": 10,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 6940,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_028_GET",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://httpbin.org/status/500",
+      "method": "GET",
+      "timeoutMs": 8111,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_029_GET",
+    "isRecurring": false,
+    "intervalSeconds": 30,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://httpbin.org/status/500",
+      "method": "GET",
+      "timeoutMs": 7358,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_030_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 3346,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_031_GET",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 9393,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_032_GET",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://api.agify.io?name=user93",
+      "method": "GET",
+      "timeoutMs": 4924,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_033_POST",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "method": "POST",
+      "timeoutMs": 8736,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "foo",
+        "body": "bar",
+        "userId": 240
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_034_GET",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 7755,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_035_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://api.agify.io?name=user53",
+      "method": "GET",
+      "timeoutMs": 9823,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_036_DELETE",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://reqres.in/api/users/12",
+      "method": "DELETE",
+      "timeoutMs": 3711,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_037_POST",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "method": "POST",
+      "timeoutMs": 4574,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "foo",
+        "body": "bar",
+        "userId": 225
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_038_GET",
+    "isRecurring": true,
+    "intervalSeconds": 15,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/products/68",
+      "method": "GET",
+      "timeoutMs": 8260,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_039_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://api.agify.io?name=user27",
+      "method": "GET",
+      "timeoutMs": 2146,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_040_GET",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 6287,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_041_POST",
+    "isRecurring": true,
+    "intervalSeconds": 10,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/auth/login",
+      "method": "POST",
+      "timeoutMs": 6461,
+      "headers": {},
+      "body": {
+        "username": "kminchelle",
+        "password": "0lelplR"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_042_GET",
+    "isRecurring": false,
+    "intervalSeconds": 300,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 6944,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_043_GET",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/products/85",
+      "method": "GET",
+      "timeoutMs": 7843,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_044_GET",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/87",
+      "method": "GET",
+      "timeoutMs": 9189,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_045_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/products/18",
+      "method": "GET",
+      "timeoutMs": 2667,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_046_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 7063,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_047_GET",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 6362,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_048_GET",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 5031,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_049_GET",
+    "isRecurring": false,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 2818,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_050_GET",
+    "isRecurring": true,
+    "intervalSeconds": 10,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/products/6",
+      "method": "GET",
+      "timeoutMs": 7073,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_051_POST",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 3294,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_052_POST",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "method": "POST",
+      "timeoutMs": 2146,
+      "headers": {},
+      "body": {
+        "title": "foo",
+        "body": "bar",
+        "userId": 200
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_053_GET",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://api.agify.io?name=user86",
+      "method": "GET",
+      "timeoutMs": 3946,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_054_GET",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 3937,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_055_GET",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 4909,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_056_GET",
+    "isRecurring": true,
+    "intervalSeconds": 15,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/30",
+      "method": "GET",
+      "timeoutMs": 2078,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_057_DELETE",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://reqres.in/api/users/38",
+      "method": "DELETE",
+      "timeoutMs": 4211,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_058_GET",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 5760,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_059_DELETE",
+    "isRecurring": false,
+    "intervalSeconds": 30,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://reqres.in/api/users/55",
+      "method": "DELETE",
+      "timeoutMs": 5737,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_060_GET",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 7332,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_061_GET",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://api.agify.io?name=user40",
+      "method": "GET",
+      "timeoutMs": 4797,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_062_GET",
+    "isRecurring": false,
+    "intervalSeconds": 120,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 4833,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_063_GET",
+    "isRecurring": true,
+    "intervalSeconds": 15,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://httpbin.org/status/500",
+      "method": "GET",
+      "timeoutMs": 7009,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_064_DELETE",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://reqres.in/api/users/96",
+      "method": "DELETE",
+      "timeoutMs": 8494,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_065_GET",
+    "isRecurring": false,
+    "intervalSeconds": 300,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 5214,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_066_GET",
+    "isRecurring": true,
+    "intervalSeconds": 15,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 6582,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_067_GET",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/49",
+      "method": "GET",
+      "timeoutMs": 2741,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_068_GET",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://dummyjson.com/products/100",
+      "method": "GET",
+      "timeoutMs": 7528,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_069_GET",
+    "isRecurring": false,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 2157,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_070_GET",
+    "isRecurring": false,
+    "intervalSeconds": 300,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 4567,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_071_POST",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/auth/login",
+      "method": "POST",
+      "timeoutMs": 4078,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {
+        "username": "kminchelle",
+        "password": "0lelplR"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_072_GET",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://dummyjson.com/products/37",
+      "method": "GET",
+      "timeoutMs": 9273,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_073_GET",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 8341,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_074_GET",
+    "isRecurring": true,
+    "intervalSeconds": 15,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/41",
+      "method": "GET",
+      "timeoutMs": 3786,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_075_GET",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://api.agify.io?name=user20",
+      "method": "GET",
+      "timeoutMs": 6831,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_076_POST",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "method": "POST",
+      "timeoutMs": 6422,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {
+        "title": "foo",
+        "body": "bar",
+        "userId": 136
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_077_GET",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 2281,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_078_GET",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://httpbin.org/status/500",
+      "method": "GET",
+      "timeoutMs": 6256,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_079_POST",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/auth/login",
+      "method": "POST",
+      "timeoutMs": 6944,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {
+        "username": "kminchelle",
+        "password": "0lelplR"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_080_POST",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 6572,
+      "headers": {},
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_081_POST",
+    "isRecurring": true,
+    "intervalSeconds": 15,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 5962,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_082_GET",
+    "isRecurring": false,
+    "intervalSeconds": 300,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://catfact.ninja/fact",
+      "method": "GET",
+      "timeoutMs": 5744,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_083_GET",
+    "isRecurring": false,
+    "intervalSeconds": 30,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/1",
+      "method": "GET",
+      "timeoutMs": 9741,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_084_POST",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://dummyjson.com/auth/login",
+      "method": "POST",
+      "timeoutMs": 2212,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {
+        "username": "kminchelle",
+        "password": "0lelplR"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_085_POST",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 6286,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_086_GET",
+    "isRecurring": true,
+    "intervalSeconds": 10,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://api.agify.io?name=user73",
+      "method": "GET",
+      "timeoutMs": 4324,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_087_GET",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://httpbin.org/status/500",
+      "method": "GET",
+      "timeoutMs": 5486,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_088_POST",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "method": "POST",
+      "timeoutMs": 2932,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "title": "foo",
+        "body": "bar",
+        "userId": 306
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_089_DELETE",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://reqres.in/api/users/22",
+      "method": "DELETE",
+      "timeoutMs": 9887,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_090_GET",
+    "isRecurring": false,
+    "intervalSeconds": 60,
+    "maxRetries": 0,
+    "payload": {
+      "url": "https://dummyjson.com/products/43",
+      "method": "GET",
+      "timeoutMs": 8219,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_091_GET",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/24",
+      "method": "GET",
+      "timeoutMs": 9909,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_092_POST",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://reqres.in/api/users",
+      "method": "POST",
+      "timeoutMs": 4027,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {
+        "name": "morpheus",
+        "job": "leader"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_093_GET",
+    "isRecurring": true,
+    "intervalSeconds": 30,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 8294,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_094_GET",
+    "isRecurring": false,
+    "intervalSeconds": 30,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://httpbin.org/delay/2",
+      "method": "GET",
+      "timeoutMs": 8008,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_095_GET",
+    "isRecurring": true,
+    "intervalSeconds": 60,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://httpbin.org/status/500",
+      "method": "GET",
+      "timeoutMs": 3473,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_096_POST",
+    "isRecurring": true,
+    "intervalSeconds": 15,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://dummyjson.com/auth/login",
+      "method": "POST",
+      "timeoutMs": 6190,
+      "headers": {},
+      "body": {
+        "username": "kminchelle",
+        "password": "0lelplR"
+      }
+    }
+  },
+  {
+    "name": "Auto_Job_097_DELETE",
+    "isRecurring": true,
+    "intervalSeconds": 120,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://reqres.in/api/users/71",
+      "method": "DELETE",
+      "timeoutMs": 9644,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_098_DELETE",
+    "isRecurring": true,
+    "intervalSeconds": 300,
+    "maxRetries": 3,
+    "payload": {
+      "url": "https://reqres.in/api/users/58",
+      "method": "DELETE",
+      "timeoutMs": 2859,
+      "headers": {},
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_099_GET",
+    "isRecurring": false,
+    "intervalSeconds": 10,
+    "maxRetries": 1,
+    "payload": {
+      "url": "https://dummyjson.com/quotes/random",
+      "method": "GET",
+      "timeoutMs": 5544,
+      "headers": {
+        "User-Agent": "Chronos-Worker-Bot/1.0"
+      },
+      "body": {}
+    }
+  },
+  {
+    "name": "Auto_Job_100_GET",
+    "isRecurring": false,
+    "intervalSeconds": 15,
+    "maxRetries": 2,
+    "payload": {
+      "url": "https://jsonplaceholder.typicode.com/todos/76",
+      "method": "GET",
+      "timeoutMs": 6724,
+      "headers": {
+        "Authorization": "Bearer test-token-xyz",
+        "Accept": "application/json"
+      },
+      "body": {}
+    }
+  }
+]

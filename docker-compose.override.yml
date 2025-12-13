@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Open DB port for DBeaver/pgAdmin
+  postgres:
+    ports:
+      - "5432:5432"
+
+  # Open Gateway and allow CORS from Localhost (e.g., if you run 'npm run dev' on port 5173)
+  gateway:
+    ports:
+      - "8080:8080"
+    environment:
+      # Allow local React app to talk to Gateway
+      FRONTEND_URI: "http://localhost:8085  "
+
+  # Open services for Postman/Debugging
+  scheduler:
+    ports:
+      - "8081:8081"
+
+  worker:
+    ports:
+      - "8083:8083"
+
+  # Monitoring Tools
+  prometheus:
+    ports:
+      - "9090:9090"
+
+  grafana:
+    ports:
+      - "3000:3000"
