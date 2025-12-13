@@ -2,14 +2,13 @@ version: '3.8'
 
 services:
   # ------------------------------------------------------
-  # 1. FRONTEND (Only exists in Cloud!)
+  # 1. FRONTEND
   # ------------------------------------------------------
   frontend:
     build:
       context: ./chronos-job-dashboard-main
       dockerfile: Dockerfile
       args:
-        # Your DigitalOcean IP
         - VITE_API_URL=http://159.65.158.1:8080
     container_name: chronos-frontend
     ports:
@@ -19,36 +18,63 @@ services:
       - chronos-net
 
   # ------------------------------------------------------
-  # 2. GATEWAY (Expose API to internet)
+  # 2. GATEWAY
   # ------------------------------------------------------
   gateway:
     ports:
       - "8080:8080"
-    environment:
-      # Allow the deployed Frontend IP to talk to Gateway
-      FRONTEND_URI: "http://159.65.158.1"
     restart: always
+    environment:
+      # ⚠️ OVERRIDE DEFAULTS WITH SECRETS
+      SPRING_R2DBC_USERNAME: ${PROD_DB_USER}
+      SPRING_R2DBC_PASSWORD: ${PROD_DB_PASSWORD}
+      FRONTEND_URI: "http://159.65.158.1"
+      # You need to re-declare these if the base file uses defaults you want to keep,
+      # but generally, Docker merges. However, it's safer to be explicit with URLs
+      # if they rely on the DB.
+      # SPRING_R2DBC_URL is inherited from base, which is fine (jdbc:postgresql://postgres...)
 
   # ------------------------------------------------------
-  # 3. INTERNAL SERVICES (Secure them)
+  # 3. DATABASE
   # ------------------------------------------------------
   postgres:
     restart: always
-    # No ports exposed! Accessible only by other containers.
+    environment:
+      # ⚠️ OVERRIDE DEFAULTS WITH SECRETS
+      POSTGRES_USER: ${PROD_DB_USER}
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
+      # POSTGRES_DB and TZ are inherited from base
 
+  # ------------------------------------------------------
+  # 4. SCHEDULER
+  # ------------------------------------------------------
   scheduler:
     restart: always
-    # No ports exposed!
+    environment:
+      # ⚠️ OVERRIDE DEFAULTS WITH SECRETS
+      SPRING_DATASOURCE_USERNAME: ${PROD_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PROD_DB_PASSWORD}
 
+  # ------------------------------------------------------
+  # 5. WORKER
+  # ------------------------------------------------------
   worker:
     restart: always
-    # No ports exposed!
+    environment:
+      # ⚠️ OVERRIDE DEFAULTS WITH SECRETS
+      SPRING_DATASOURCE_USERNAME: ${PROD_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PROD_DB_PASSWORD}
 
-  prometheus:
-    restart: always
-    # No ports exposed! (View via Grafana or SSH tunnel if needed)
-
+  # ------------------------------------------------------
+  # 6. MONITORING
+  # ------------------------------------------------------
   grafana:
     ports:
-      - "3000:3000" # Keep exposed if you want to view dashboards publicly
+      - "3000:3000"
+    restart: always
+    environment:
+      # ⚠️ OVERRIDE ADMIN PASSWORD
+      - GF_SECURITY_ADMIN_PASSWORD=${PROD_GRAFANA_PASSWORD}
+
+  prometheus:
     restart: always
