@@ -8,7 +8,7 @@
 
 **Chronos** is a **high-throughput, fault-tolerant distributed job scheduler** built to reliably execute millions of jobs across a cluster of workers.
 
-It is designed as a **production-grade system**, focusing on **correctness, scalability, and observability**. Chronos leverages **Java 21 Virtual Threads (Project Loom)** for massive concurrency, **PostgreSQL row-level locking** for exactly-once execution, and a **React-based dashboard** for real-time monitoring.
+It is designed as a **production-grade system**, focusing on **correctness, scalability, and observability**, **PostgreSQL row-level locking** for exactly-once execution, and a **React-based dashboard** for real-time monitoring.
 
 > Think of Chronos as a modern alternative to Quartz — built for cloud-native, horizontally scalable systems.
 
