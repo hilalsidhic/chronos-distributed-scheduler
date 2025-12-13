@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'Chronos Default'
+    orgId: 1
+    folder: ''  # Root folder in Grafana UI
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10 # Checks for changes every 10s
+    options:
+      path: /etc/grafana/provisioning/dashboards
