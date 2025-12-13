@@ -18,10 +18,12 @@ It is designed as a **production-grade system**, focusing on **correctness, scal
 
 - **Distributed by Design** — Separate Scheduler and Worker services for clean scaling
 - **Exactly-Once Execution** — Postgres `FOR UPDATE SKIP LOCKED` prevents duplicate processing
-- **Java 21 Virtual Threads** — Handle massive I/O concurrency without thread exhaustion
 - **Automatic Retries** — Exponential backoff with configurable retry limits
 - **Observable by Default** — Prometheus metrics + Grafana dashboards included
 - **Production-Ready UI** — React dashboard for job creation & execution tracking
+
+
+   Read More at [Design Docs](https://github.com/hilalsidhic/chronos-distributed-scheduler/blob/master/docs/Chronos_%20Job%20Scheduler%20System.pdf)
 
 ---
 
@@ -54,7 +56,7 @@ Chronos is composed of **loosely coupled microservices**, orchestrated via Docke
 
 - **Prometheus** — Metrics scraping
 - **Grafana** — Pre-provisioned dashboards
-- **JVM Metrics** — Virtual threads, memory, GC, CPU
+- **JVM Metrics** — memory, GC, CPU
 
 ---
 
